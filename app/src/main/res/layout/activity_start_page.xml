@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StartPageActivity">
+
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_bkg"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_marginTop="50dp"
+            android:src="@mipmap/walking_man"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+        <TextView
+            android:fontFamily="sans-serif-smallcaps"
+            android:textSize="25dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="Bideshi Sawari"
+            android:textColor="#fff"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:padding="10dp"
+                android:drawableLeft="@drawable/ic_google_logo"
+                android:background="#fff"
+                android:text="Sign up with google"
+                android:id="@+id/sign_in_google"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp" />
+
+            <TextView
+                android:layout_marginTop="15dp"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:text="--------------------  OR  --------------------"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:layout_marginTop="15dp"
+                android:id="@+id/signInBtn"
+                android:text="Sign In with email"
+                android:textColor="#fff"
+                android:background="@drawable/login_btn_2"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp" />
+
+
+        </LinearLayout>
+
+</LinearLayout>
+</RelativeLayout>

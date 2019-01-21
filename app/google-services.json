@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "53150562876",
+    "firebase_url": "https://bideshi-sawari-e272c.firebaseio.com",
+    "project_id": "bideshi-sawari-e272c",
+    "storage_bucket": "bideshi-sawari-e272c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53150562876:android:3ead9c6861055df2",
+        "android_client_info": {
+          "package_name": "com.example.amuntimilsina.bideshisawari"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "53150562876-22ntkunm0gmnmc5148mrdksu37epctof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcooJrLeT6k61bgHIMl05z7G-_zvHIl5o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
