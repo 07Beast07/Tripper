@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -15,6 +16,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class StartPageActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
@@ -22,6 +30,14 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
     private Button signInBtn;
     private GoogleApiClient googleApiClient;
     private static final int REQ_CODE = 101;
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authStateListener;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authStateListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +45,16 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
         setContentView(R.layout.activity_start_page);
         signInBtn = findViewById(R.id.signInBtn);
         signInGoogleBtn = findViewById(R.id.sign_in_google);
+        auth = FirebaseAuth.getInstance();
+
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if(firebaseAuth.getCurrentUser() != null){
+                    startActivity(new Intent(StartPageActivity.this,HomeActivity.class));
+                }
+            }
+        };
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,7 +64,7 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
         });
 
 
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
 
         signInGoogleBtn.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +78,7 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(StartPageActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -67,18 +93,30 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
     private void handleResult(GoogleSignInResult result) {
         if(result.isSuccess()){
             GoogleSignInAccount account = result.getSignInAccount();
-            String name = account.getDisplayName();
-            String email = account.getEmail();
-            signUpTask(name,email);
+            signUpTask(account);
 
         }else{
-
+            Toast.makeText(StartPageActivity.this, "Auth went wrong!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void signUpTask(String name, String email) {
+    private void signUpTask(GoogleSignInAccount account) {
 
-        //Now we need to put the name and email in firebase and register
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    FirebaseUser user = auth.getCurrentUser();
+
+                }else {
+                    Toast.makeText(StartPageActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
+
+
+
 }
