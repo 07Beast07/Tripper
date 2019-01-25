@@ -6,4 +6,12 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="TabSelectedColor">#c24a4a</color>
+    <color name="ImageBorder">#1de308</color>
+    <color name="blue">#348af7</color>
+
+    <color name="temperature_background">@color/blue</color>
+    <color name="temperature_text">@android:color/white</color>
+
+    <color name="green_dot_big">@color/blue</color>
+    <color name="green_dot_small">@color/blue</color>
 </resources>
