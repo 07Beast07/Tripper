@@ -34,7 +34,7 @@ public class DetailsActivity extends AppCompatActivity implements DecodeBitmapTa
             return;
         }
 
-        imageView = (ImageView)findViewById(R.id.image);
+        imageView = (ImageView) findViewById(R.id.image);
         imageView.setImageResource(smallResId);
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -52,11 +52,16 @@ public class DetailsActivity extends AppCompatActivity implements DecodeBitmapTa
                 private boolean isClosing = false;
 
                 @Override
-                public void onTransitionPause(Transition transition) {}
+                public void onTransitionPause(Transition transition) {
+                }
+
                 @Override
-                public void onTransitionResume(Transition transition) {}
+                public void onTransitionResume(Transition transition) {
+                }
+
                 @Override
-                public void onTransitionCancel(Transition transition) {}
+                public void onTransitionCancel(Transition transition) {
+                }
 
                 @Override
                 public void onTransitionStart(Transition transition) {
@@ -94,7 +99,7 @@ public class DetailsActivity extends AppCompatActivity implements DecodeBitmapTa
     }
 
     private void removeCardCorners() {
-        final CardView cardView = (CardView)findViewById(R.id.card);
+        final CardView cardView = (CardView) findViewById(R.id.card);
         ObjectAnimator.ofFloat(cardView, "radius", 0f).setDuration(50).start();
     }
 
@@ -102,12 +107,23 @@ public class DetailsActivity extends AppCompatActivity implements DecodeBitmapTa
     private void loadFullSizeBitmap(int smallResId) {
         int bigResId;
         switch (smallResId) {
-            case R.drawable.p1: bigResId = R.drawable.p1_big; break;
-            case R.drawable.p2: bigResId = R.drawable.p2_big; break;
-            case R.drawable.p3: bigResId = R.drawable.p3_big; break;
-            case R.drawable.p4: bigResId = R.drawable.p4_big; break;
-            case R.drawable.p5: bigResId = R.drawable.p5_big; break;
-            default: bigResId = R.drawable.p1_big;
+            case R.drawable.p1:
+                bigResId = R.drawable.p1_big;
+                break;
+            case R.drawable.p2:
+                bigResId = R.drawable.p2_big;
+                break;
+            case R.drawable.p3:
+                bigResId = R.drawable.p3_big;
+                break;
+            case R.drawable.p4:
+                bigResId = R.drawable.p4_big;
+                break;
+            case R.drawable.p5:
+                bigResId = R.drawable.p5_big;
+                break;
+            default:
+                bigResId = R.drawable.p1_big;
         }
 
         final DisplayMetrics metrics = new DisplayMetrics();

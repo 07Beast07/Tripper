@@ -15,7 +15,7 @@ public class MoreOptionFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_more_options,container,false);
+        View view = inflater.inflate(R.layout.fragment_more_options, container, false);
 
         return view;
     }

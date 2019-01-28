@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import com.example.amuntimilsina.bideshisawari.R;
 
 public class HomeDefaultFragment extends Fragment {
-        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_default, container, false);
-            return view;
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_default, container, false);
+        return view;
+    }
 }

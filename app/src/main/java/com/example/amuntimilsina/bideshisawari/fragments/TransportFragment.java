@@ -1,44 +1,33 @@
 package com.example.amuntimilsina.bideshisawari.fragments;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.example.amuntimilsina.bideshisawari.Interface.BusTrackingInterfaces;
-import com.example.amuntimilsina.bideshisawari.R;
-
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.amuntimilsina.bideshisawari.Interface.BusTrackingInterfaces;
+import com.example.amuntimilsina.bideshisawari.R;
 import com.example.amuntimilsina.bideshisawari.RetrofitInitilization.ApiClient;
 import com.example.amuntimilsina.bideshisawari.models.AllBusDataFromFirebase;
 import com.example.amuntimilsina.bideshisawari.models.BusNumberModel;
 import com.example.amuntimilsina.bideshisawari.models.BusStationModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,14 +36,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,8 +153,8 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
          */
         int height = 120;
         int width = 100;
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.mipmap.tourist_icon);
-        Bitmap b=bitmapdraw.getBitmap();
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.tourist_icon);
+        Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
         LatLng latLng = new LatLng(latitude, longitude);
@@ -193,11 +179,11 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
         if (Arguments != null && Arguments.containsKey("SearchItemResultTxt")) {
             stationName = getArguments().getString("SearchItemResultTxt");
-            Toast.makeText(getActivity(), "All the buses to "+stationName+" are shown.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "All the buses to " + stationName + " are shown.", Toast.LENGTH_SHORT).show();
             int height = 80;
             int width = 80;
-            BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.mipmap.bus_icon);
-            Bitmap b=bitmapdraw.getBitmap();
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.bus_icon);
+            Bitmap b = bitmapdraw.getBitmap();
             final Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
 
@@ -259,8 +245,8 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
         int height = 80;
         int width = 80;
-        BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.mipmap.bus_icon);
-        Bitmap b=bitmapdraw.getBitmap();
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.bus_icon);
+        Bitmap b = bitmapdraw.getBitmap();
         final Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
 

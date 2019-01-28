@@ -2,28 +2,20 @@ package com.example.amuntimilsina.bideshisawari.fragments;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageSwitcher;
-import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -32,19 +24,23 @@ import com.example.amuntimilsina.bideshisawari.Helper.CardSliderLayoutManager;
 import com.example.amuntimilsina.bideshisawari.Helper.CardSnapHelper;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
+import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 public class ParksFragment extends Fragment {
-    private final int[][] dotCoords = new int[5][2];
+    // private final int[][] dotCoords = new int[5][2];
     private final int[] pics = {R.drawable.p1, R.drawable.p2, R.drawable.p3, R.drawable.p4, R.drawable.p5};
-    private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
-    private final int[] descriptions = {R.string.text1, R.string.text2, R.string.text3, R.string.text4, R.string.text5};
-    private final String[] countries = {"PARIS", "SEOUL", "LONDON", "BEIJING", "THIRA"};
-    private final String[] places = {"The Louvre", "Gwanghwamun", "Tower Bridge", "Temple of Heaven", "Aegeana Sea"};
-    private final String[] temperatures = {"21°C", "19°C", "17°C", "23°C", "20°C"};
-    private final String[] times = {"Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00"};
+    // private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
+    // private final int[] descriptions = {R.string.text1, R.string.text2, R.string.text3, R.string.text4, R.string.text5};
+    // private final String[] countries = {"PARIS", "SEOUL", "LONDON", "BEIJING", "THIRA"};
+    //private final String[] places = {"The Louvre", "Gwanghwamun", "Tower Bridge", "Temple of Heaven", "Aegeana Sea"};
+    //private final String[] temperatures = {"21°C", "19°C", "17°C", "23°C", "20°C"};
+    //private final String[] times = {"Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00"};
+    private ArrayList<String> rating = new ArrayList<>();
+    private ArrayList<String> place = new ArrayList<>();
+    private ArrayList<String> temperature = new ArrayList<>();
 
     private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new OnCardClickListener());
 
@@ -52,28 +48,47 @@ public class ParksFragment extends Fragment {
     private RecyclerView recyclerView;
     private ImageSwitcher mapSwitcher;
     private TextSwitcher temperatureSwitcher;
-    private TextSwitcher placeSwitcher;
+    private TextSwitcher ratingSwitcher;
     private TextSwitcher clockSwitcher;
     private TextSwitcher descriptionsSwitcher;
     private View greenDot;
 
-    private TextView country1TextView;
-    private TextView country2TextView;
-    private int countryOffset1;
-    private int countryOffset2;
+    private TextView place1TextView;
+    private TextView place2TextView;
+    private int placeOffset1;
+    private int placeOffset2;
     private long countryAnimDuration;
     private int currentPosition;
 
     private DecodeBitmapTask decodeMapBitmapTask;
     private DecodeBitmapTask.Listener mapLoadListener;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_parks, container, false);
+        initData();
         initRecyclerView(view);
         initCountryText(view);
         initSwitchers(view);
-        initGreenDot(view);
+        // initGreenDot(view);
+
         return view;
     }
+
+    private void initData() {
+        rating.add("4.3");
+        rating.add("2.3");
+        rating.add("3.0");
+        rating.add("5.0");
+        place.add("Bkt durbar");
+        place.add("Dharara");
+        place.add("Bagmati");
+        place.add("Lumbini");
+        temperature.add("21°C");
+        temperature.add("11°C");
+        temperature.add("9°C");
+        temperature.add("44°C");
+    }
+
     private void initRecyclerView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(sliderAdapter);
@@ -104,13 +119,14 @@ public class ParksFragment extends Fragment {
     private void initSwitchers(View view) {
         temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
         temperatureSwitcher.setFactory(new TextViewFactory(R.style.TemperatureTextView, true));
-        temperatureSwitcher.setCurrentText(temperatures[0]);
+        temperatureSwitcher.setCurrentText(temperature.get(0));
 
-        placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
-        placeSwitcher.setFactory(new TextViewFactory(R.style.PlaceTextView, false));
-        placeSwitcher.setCurrentText(places[0]);
+        ratingSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
+        ratingSwitcher.setFactory(new TextViewFactory(R.style.PlaceTextView, false));
+        ratingSwitcher.setCurrentText(rating.get(0));
 
-        clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
+
+        /*clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
         clockSwitcher.setFactory(new TextViewFactory(R.style.ClockTextView, false));
         clockSwitcher.setCurrentText(times[0]);
 
@@ -132,26 +148,26 @@ public class ParksFragment extends Fragment {
                 ((ImageView)mapSwitcher.getNextView()).setImageBitmap(bitmap);
                 mapSwitcher.showNext();
             }
-        };
+        };*/
     }
 
     private void initCountryText(View view) {
         countryAnimDuration = getResources().getInteger(R.integer.labels_animation_duration);
-        countryOffset1 = getResources().getDimensionPixelSize(R.dimen.left_offset);
-        countryOffset2 = getResources().getDimensionPixelSize(R.dimen.card_width);
-        country1TextView = (TextView) view.findViewById(R.id.tv_country_1);
-        country2TextView = (TextView) view.findViewById(R.id.tv_country_2);
+        placeOffset1 = getResources().getDimensionPixelSize(R.dimen.left_offset);
+        placeOffset2 = getResources().getDimensionPixelSize(R.dimen.card_width);
+        place1TextView = (TextView) view.findViewById(R.id.tv_country_1);
+        place2TextView = (TextView) view.findViewById(R.id.tv_country_2);
 
-        country1TextView.setX(countryOffset1);
-        country2TextView.setX(countryOffset2);
-        country1TextView.setText(countries[0]);
-        country2TextView.setAlpha(0f);
+        place1TextView.setX(placeOffset1);
+        place2TextView.setX(placeOffset2);
+        place1TextView.setText(place.get(0));
+        place2TextView.setAlpha(0f);
 
-        country1TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
-        country2TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
+        place1TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
+        place2TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
     }
 
-    private void initGreenDot(final View view) {
+    /*private void initGreenDot(final View view) {
         mapSwitcher.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -177,25 +193,25 @@ public class ParksFragment extends Fragment {
                 greenDot.setY(dotCoords[0][1]);
             }
         });
-    }
+    }*/
 
     private void setCountryText(String text, boolean left2right) {
         final TextView invisibleText;
         final TextView visibleText;
-        if (country1TextView.getAlpha() > country2TextView.getAlpha()) {
-            visibleText = country1TextView;
-            invisibleText = country2TextView;
+        if (place1TextView.getAlpha() > place2TextView.getAlpha()) {
+            visibleText = place1TextView;
+            invisibleText = place2TextView;
         } else {
-            visibleText = country2TextView;
-            invisibleText = country1TextView;
+            visibleText = place2TextView;
+            invisibleText = place1TextView;
         }
 
         final int vOffset;
         if (left2right) {
             invisibleText.setX(0);
-            vOffset = countryOffset2;
+            vOffset = placeOffset2;
         } else {
-            invisibleText.setX(countryOffset2);
+            invisibleText.setX(placeOffset2);
             vOffset = 0;
         }
 
@@ -203,7 +219,7 @@ public class ParksFragment extends Fragment {
 
         final ObjectAnimator iAlpha = ObjectAnimator.ofFloat(invisibleText, "alpha", 1f);
         final ObjectAnimator vAlpha = ObjectAnimator.ofFloat(visibleText, "alpha", 0f);
-        final ObjectAnimator iX = ObjectAnimator.ofFloat(invisibleText, "x", countryOffset1);
+        final ObjectAnimator iX = ObjectAnimator.ofFloat(invisibleText, "x", placeOffset1);
         final ObjectAnimator vX = ObjectAnimator.ofFloat(visibleText, "x", vOffset);
 
         final AnimatorSet animSet = new AnimatorSet();
@@ -222,8 +238,8 @@ public class ParksFragment extends Fragment {
     }
 
     private void onActiveCardChange(int pos) {
-        int animH[] = new int[] {R.anim.slide_in_right, R.anim.slide_out_left};
-        int animV[] = new int[] {R.anim.slide_in_top, R.anim.slide_out_bottom};
+        int animH[] = new int[]{R.anim.slide_in_right, R.anim.slide_out_left};
+        int animV[] = new int[]{R.anim.slide_in_top, R.anim.slide_out_bottom};
 
         final boolean left2right = pos < currentPosition;
         if (left2right) {
@@ -234,17 +250,17 @@ public class ParksFragment extends Fragment {
             animV[1] = R.anim.slide_out_top;
         }
 
-        setCountryText(countries[pos % countries.length], left2right);
+        setCountryText(place.get(pos % place.size()), left2right);
 
         temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
         temperatureSwitcher.setOutAnimation(getActivity(), animH[1]);
-        temperatureSwitcher.setText(temperatures[pos % temperatures.length]);
+        temperatureSwitcher.setText(temperature.get(pos % temperature.size()));
 
-        placeSwitcher.setInAnimation(getActivity(), animV[0]);
-        placeSwitcher.setOutAnimation(getActivity(), animV[1]);
-        placeSwitcher.setText(places[pos % places.length]);
+        ratingSwitcher.setInAnimation(getActivity(), animV[0]);
+        ratingSwitcher.setOutAnimation(getActivity(), animV[1]);
+        ratingSwitcher.setText(rating.get(pos % rating.size()));
 
-        clockSwitcher.setInAnimation(getActivity(), animV[0]);
+        /*clockSwitcher.setInAnimation(getActivity(), animV[0]);
         clockSwitcher.setOutAnimation(getActivity(), animV[1]);
         clockSwitcher.setText(times[pos % times.length]);
 
@@ -256,11 +272,11 @@ public class ParksFragment extends Fragment {
                 .translationX(dotCoords[pos % dotCoords.length][0])
                 .translationY(dotCoords[pos % dotCoords.length][1])
                 .start();
-
+*/
         currentPosition = pos;
     }
 
-    private void showMap(@DrawableRes int resId) {
+  /*  private void showMap(@DrawableRes int resId) {
         if (decodeMapBitmapTask != null) {
             decodeMapBitmapTask.cancel(true);
         }
@@ -270,13 +286,13 @@ public class ParksFragment extends Fragment {
 
         decodeMapBitmapTask = new DecodeBitmapTask(getResources(), resId, w, h, mapLoadListener);
         decodeMapBitmapTask.execute();
-    }
+    }*/
 
-    private class TextViewFactory implements  ViewSwitcher.ViewFactory {
+    private class TextViewFactory implements ViewSwitcher.ViewFactory {
 
         @StyleRes
-         int styleId;
-         boolean center;
+        int styleId;
+        boolean center;
 
         TextViewFactory(@StyleRes int styleId, boolean center) {
             this.styleId = styleId;
@@ -303,52 +319,43 @@ public class ParksFragment extends Fragment {
 
     }
 
-    private class ImageViewFactory implements ViewSwitcher.ViewFactory {
-        @Override
-        public View makeView() {
-            final ImageView imageView = new ImageView(getActivity());
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    /* private class ImageViewFactory implements ViewSwitcher.ViewFactory {
+         @Override
+         public View makeView() {
+             final ImageView imageView = new ImageView(getActivity());
+             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            final ViewGroup.LayoutParams lp = new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            imageView.setLayoutParams(lp);
+             final ViewGroup.LayoutParams lp = new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+             imageView.setLayoutParams(lp);
 
-            return imageView;
-        }
-    }
-
+             return imageView;
+         }
+     }*/
     private class OnCardClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            final CardSliderLayoutManager lm =  (CardSliderLayoutManager) recyclerView.getLayoutManager();
-
+            final CardSliderLayoutManager lm = (CardSliderLayoutManager) recyclerView.getLayoutManager();
+            final int activeCardPosition = lm.getActiveCardPosition();
+            final int clickedPosition = recyclerView.getChildAdapterPosition(view);
             if (lm.isSmoothScrolling()) {
                 return;
             }
 
-            final int activeCardPosition = lm.getActiveCardPosition();
             if (activeCardPosition == RecyclerView.NO_POSITION) {
                 return;
             }
-
-            final int clickedPosition = recyclerView.getChildAdapterPosition(view);
-            if (clickedPosition == activeCardPosition) {
-                final Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(DetailsActivity.BUNDLE_IMAGE_ID, pics[activeCardPosition % pics.length]);
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent);
-                } else {
-                    final CardView cardView = (CardView) view;
-                    final View sharedView = cardView.getChildAt(cardView.getChildCount() - 1);
-                    final ActivityOptions options = ActivityOptions
-                            .makeSceneTransitionAnimation(getActivity(), sharedView, "shared");
-                    startActivity(intent, options.toBundle());
-                }
-            } else if (clickedPosition > activeCardPosition) {
+            if (clickedPosition > activeCardPosition) {
                 recyclerView.smoothScrollToPosition(clickedPosition);
                 onActiveCardChange(clickedPosition);
             }
+
+            if (clickedPosition == activeCardPosition) {
+                final Intent intent = new Intent(getActivity(), PlaceDetail.class);
+                intent.putExtra("position", place.get(clickedPosition % place.size()));
+                startActivity(intent);
+
+            }
+
         }
     }
-
 }

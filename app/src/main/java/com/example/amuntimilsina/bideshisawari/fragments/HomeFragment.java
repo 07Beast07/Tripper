@@ -1,8 +1,6 @@
 package com.example.amuntimilsina.bideshisawari.fragments;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.amuntimilsina.bideshisawari.R;
-import com.example.amuntimilsina.bideshisawari.StartPageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -28,30 +25,30 @@ public class HomeFragment extends Fragment {
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authStateListener;
     FrameLayout frameLayout;
-    LinearLayout parks,attraction,resturants,shopping;
-    TextView parkstext,shoppingtext,resturanttext,attractiontext;
-    CircularImageView parksImage,shoppingImage,resturantImage,attractionImage;
+    LinearLayout parks, attraction, resturants, shopping;
+    TextView parkstext, shoppingtext, resturanttext, attractiontext;
+    CircularImageView parksImage, shoppingImage, resturantImage, attractionImage;
     View line;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        line=view.findViewById(R.id.line);
-        parksImage=view.findViewById(R.id.parks_icon);
-        shoppingImage=view.findViewById(R.id.shopping_icon);
-        resturantImage=view.findViewById(R.id.resturant_icon);
-        attractionImage=view.findViewById(R.id.attraction_icon);
+        line = view.findViewById(R.id.line);
+        parksImage = view.findViewById(R.id.parks_icon);
+        shoppingImage = view.findViewById(R.id.shopping_icon);
+        resturantImage = view.findViewById(R.id.resturant_icon);
+        attractionImage = view.findViewById(R.id.attraction_icon);
         logOutBtn = view.findViewById(R.id.logOutBtn);
         frameLayout = view.findViewById(R.id.home_frame);
-        parks=view.findViewById(R.id.parks);
-        attraction=view.findViewById(R.id.attraction);
-        resturants=view.findViewById(R.id.resturants);
-        shopping=view.findViewById(R.id.shopping);
-        shoppingtext=view.findViewById(R.id.shopping_text);
-        attractiontext=view.findViewById(R.id.attraction_text);
-        resturanttext=view.findViewById(R.id.resturants_text);
-        parkstext=view.findViewById(R.id.parks_text);
+        parks = view.findViewById(R.id.parks);
+        attraction = view.findViewById(R.id.attraction);
+        resturants = view.findViewById(R.id.resturants);
+        shopping = view.findViewById(R.id.shopping);
+        shoppingtext = view.findViewById(R.id.shopping_text);
+        attractiontext = view.findViewById(R.id.attraction_text);
+        resturanttext = view.findViewById(R.id.resturants_text);
+        parkstext = view.findViewById(R.id.parks_text);
         parks.setOnClickListener(tabclick);
         attraction.setOnClickListener(tabclick);
         resturants.setOnClickListener(tabclick);
@@ -66,7 +63,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         };*/
-        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_frame,new HomeDefaultFragment()).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_frame, new HomeDefaultFragment()).commit();
 
         logOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +95,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-     //   auth.addAuthStateListener(authStateListener);
+        //   auth.addAuthStateListener(authStateListener);
     }
 
     public View.OnClickListener tabclick = new View.OnClickListener() {

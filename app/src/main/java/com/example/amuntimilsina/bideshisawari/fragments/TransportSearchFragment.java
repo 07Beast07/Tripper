@@ -5,21 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.amuntimilsina.bideshisawari.Adapters.TransportSearchAdapter;
@@ -95,31 +91,23 @@ public class TransportSearchFragment extends Fragment {
         });
 
 
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame, new TransportFragment()).commit();
 
-
-
-
-
-
-      backBtn.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View view) {
-              getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame, new TransportFragment()).commit();
-
-          }
-      });
+            }
+        });
 
         return view;
     }
-
-
 
 
     private void initilizeListThroughAdapter() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         transportSearchRecyclerView.setLayoutManager(linearLayoutManager);
-        transportSearchAdapter = new TransportSearchAdapter(getActivity(),busStationData,Searchbox);
+        transportSearchAdapter = new TransportSearchAdapter(getActivity(), busStationData, Searchbox);
         transportSearchRecyclerView.setAdapter(transportSearchAdapter);
     }
 
