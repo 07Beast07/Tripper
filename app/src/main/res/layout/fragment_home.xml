@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/splash_bkg"
+    android:background="@drawable/bkg"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -18,7 +18,7 @@
             android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="#fff"
-            android:text="Bideshi Sawari"
+            android:text="Tripper"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/places"
+                android:id="@+id/attraction"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -74,17 +74,18 @@
                 android:layout_height="wrap_content">
 
                 <com.mikhaellopez.circularimageview.CircularImageView
-                    android:id="@+id/places_icon"
-                    android:src="@mipmap/places_icon"
+                    android:id="@+id/attraction_icon"
+                    android:src="@mipmap/attractions"
+                    app:civ_border_width="2dp"
                     android:layout_margin="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"/>
                 <TextView
-                    android:id="@+id/places_text"
+                    android:id="@+id/attraction_text"
                     android:gravity="center"
-                    android:text="Places"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:text="Attractions"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -101,15 +102,16 @@
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/resturant_icon"
                     android:src="@mipmap/resturant_icon"
+                    app:civ_border_width="2dp"
                     android:layout_margin="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp" />
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
                 <TextView
                     android:id="@+id/resturants_text"
                     android:gravity="center"
                     android:text="Resturants"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -124,24 +126,25 @@
                 android:layout_height="wrap_content">
 
                 <com.mikhaellopez.circularimageview.CircularImageView
-                    android:id="@+id/park_icon"
+                    android:id="@+id/parks_icon"
                     android:src="@mipmap/park_testicon"
+                    app:civ_border_width="2dp"
                     android:layout_margin="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp" />
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
                 <TextView
                     android:id="@+id/parks_text"
                     android:gravity="center"
                     android:text="Parks"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/parking"
+                android:id="@+id/shopping"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical"
@@ -149,17 +152,18 @@
                 android:layout_height="wrap_content">
 
                 <com.mikhaellopez.circularimageview.CircularImageView
-                    android:id="@+id/parking_icon"
-                    android:src="@mipmap/parking_logo"
+                    android:id="@+id/shopping_icon"
+                    android:src="@mipmap/shoppinig"
+                    app:civ_border_width="2dp"
                     android:layout_margin="10dp"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp" />
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
                 <TextView
-                    android:id="@+id/parking_text"
+                    android:id="@+id/shopping_text"
                     android:gravity="center"
-                    android:text="Parking"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:text="Shopping"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -172,7 +176,8 @@
         android:background="#e1e1e1"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="5dp"/>
+        android:layout_height="3dp"/>
+
     <FrameLayout
         android:id="@+id/home_frame"
         android:layout_width="match_parent"

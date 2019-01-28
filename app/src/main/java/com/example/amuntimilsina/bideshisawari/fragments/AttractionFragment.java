@@ -36,7 +36,7 @@ import com.example.amuntimilsina.bideshisawari.R;
 
 import java.util.Random;
 
-public class PlacesFragment extends Fragment {
+public class AttractionFragment extends Fragment {
     private final int[][] dotCoords = new int[5][2];
     private final int[] pics = {R.drawable.p1, R.drawable.p2, R.drawable.p3, R.drawable.p4, R.drawable.p5};
     private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
@@ -46,7 +46,7 @@ public class PlacesFragment extends Fragment {
     private final String[] temperatures = {"21°C", "19°C", "17°C", "23°C", "20°C"};
     private final String[] times = {"Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00"};
 
-    private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new PlacesFragment.OnCardClickListener());
+    private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new AttractionFragment.OnCardClickListener());
 
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
@@ -102,27 +102,27 @@ public class PlacesFragment extends Fragment {
 
     private void initSwitchers(View view) {
         temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
-        temperatureSwitcher.setFactory(new PlacesFragment.TextViewFactory(R.style.TemperatureTextView, true));
+        temperatureSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperatures[0]);
 
         placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_place);
-        placeSwitcher.setFactory(new PlacesFragment.TextViewFactory(R.style.PlaceTextView, false));
+        placeSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.PlaceTextView, false));
         placeSwitcher.setCurrentText(places[0]);
 
         clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
-        clockSwitcher.setFactory(new PlacesFragment.TextViewFactory(R.style.ClockTextView, false));
+        clockSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.ClockTextView, false));
         clockSwitcher.setCurrentText(times[0]);
 
         descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
         descriptionsSwitcher.setInAnimation(getActivity(), android.R.anim.fade_in);
         descriptionsSwitcher.setOutAnimation(getActivity(), android.R.anim.fade_out);
-        descriptionsSwitcher.setFactory(new PlacesFragment.TextViewFactory(R.style.DescriptionTextView, false));
+        descriptionsSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.DescriptionTextView, false));
         descriptionsSwitcher.setCurrentText(getString(descriptions[0]));
 
         mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
         mapSwitcher.setInAnimation(getActivity(), R.anim.fade_in);
         mapSwitcher.setOutAnimation(getActivity(), R.anim.fade_out);
-        mapSwitcher.setFactory(new PlacesFragment.ImageViewFactory());
+        mapSwitcher.setFactory(new AttractionFragment.ImageViewFactory());
         mapSwitcher.setImageResource(maps[0]);
 
         mapLoadListener = new DecodeBitmapTask.Listener() {

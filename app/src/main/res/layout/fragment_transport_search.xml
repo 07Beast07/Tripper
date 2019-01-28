@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/transportSearchRecyclerView"
+        android:layout_below="@+id/Searchbox"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+
+    <EditText
+        android:focusable="true"
+        android:id="@+id/Searchbox"
+        android:gravity="center"
+        android:hint="Search for your destination.."
+        android:textColor="#000"
+        android:textStyle="normal"
+        android:textColorHint="#585757"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:paddingLeft="20dp"
+        android:background="@drawable/search_layout_2"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <ImageView
+        android:id="@+id/backBtn"
+        android:src="@drawable/ic_arrow_back_2_black_24dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="15dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
+
+
+</RelativeLayout>
