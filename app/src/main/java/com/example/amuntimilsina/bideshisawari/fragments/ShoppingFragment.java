@@ -106,7 +106,7 @@ public class ShoppingFragment extends Fragment {
         temperatureSwitcher.setFactory(new ShoppingFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperatures[0]);
 
-        placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_place);
+        placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
         placeSwitcher.setFactory(new ShoppingFragment.TextViewFactory(R.style.PlaceTextView, false));
         placeSwitcher.setCurrentText(places[0]);
 

@@ -32,6 +32,7 @@ import com.example.amuntimilsina.bideshisawari.Helper.CardSliderLayoutManager;
 import com.example.amuntimilsina.bideshisawari.Helper.CardSnapHelper;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
+import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
 
 import java.util.Random;
@@ -70,7 +71,7 @@ public class AttractionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_places, container, false);initRecyclerView(view);
         initCountryText(view);
         initSwitchers(view);
-        initGreenDot(view);
+        //initGreenDot(view);
         return view;
     }
     private void initRecyclerView(View view) {
@@ -105,33 +106,33 @@ public class AttractionFragment extends Fragment {
         temperatureSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperatures[0]);
 
-        placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_place);
+        placeSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
         placeSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.PlaceTextView, false));
         placeSwitcher.setCurrentText(places[0]);
 
-        clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
-        clockSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.ClockTextView, false));
-        clockSwitcher.setCurrentText(times[0]);
+        //clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
+        //clockSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.ClockTextView, false));
+        //clockSwitcher.setCurrentText(times[0]);
 
-        descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
+       /* descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
         descriptionsSwitcher.setInAnimation(getActivity(), android.R.anim.fade_in);
         descriptionsSwitcher.setOutAnimation(getActivity(), android.R.anim.fade_out);
         descriptionsSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.DescriptionTextView, false));
-        descriptionsSwitcher.setCurrentText(getString(descriptions[0]));
+        descriptionsSwitcher.setCurrentText(getString(descriptions[0]));*/
 
-        mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
+      /*  mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
         mapSwitcher.setInAnimation(getActivity(), R.anim.fade_in);
         mapSwitcher.setOutAnimation(getActivity(), R.anim.fade_out);
         mapSwitcher.setFactory(new AttractionFragment.ImageViewFactory());
-        mapSwitcher.setImageResource(maps[0]);
-
+        mapSwitcher.setImageResource(maps[0]);*/
+/*
         mapLoadListener = new DecodeBitmapTask.Listener() {
             @Override
             public void onPostExecuted(Bitmap bitmap) {
                 ((ImageView)mapSwitcher.getNextView()).setImageBitmap(bitmap);
                 mapSwitcher.showNext();
             }
-        };
+        };*/
     }
 
     private void initCountryText(View view) {
@@ -150,7 +151,7 @@ public class AttractionFragment extends Fragment {
         country2TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
     }
 
-    private void initGreenDot(final View view) {
+   /* private void initGreenDot(final View view) {
         mapSwitcher.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -176,7 +177,7 @@ public class AttractionFragment extends Fragment {
                 greenDot.setY(dotCoords[0][1]);
             }
         });
-    }
+    }*/
 
     private void setCountryText(String text, boolean left2right) {
         final TextView invisibleText;
@@ -216,7 +217,6 @@ public class AttractionFragment extends Fragment {
         if (pos == RecyclerView.NO_POSITION || pos == currentPosition) {
             return;
         }
-
         onActiveCardChange(pos);
     }
 
@@ -243,7 +243,7 @@ public class AttractionFragment extends Fragment {
         placeSwitcher.setOutAnimation(getActivity(), animV[1]);
         placeSwitcher.setText(places[pos % places.length]);
 
-        clockSwitcher.setInAnimation(getActivity(), animV[0]);
+       /* clockSwitcher.setInAnimation(getActivity(), animV[0]);
         clockSwitcher.setOutAnimation(getActivity(), animV[1]);
         clockSwitcher.setText(times[pos % times.length]);
 
@@ -255,11 +255,11 @@ public class AttractionFragment extends Fragment {
                 .translationX(dotCoords[pos % dotCoords.length][0])
                 .translationY(dotCoords[pos % dotCoords.length][1])
                 .start();
-
+*/
         currentPosition = pos;
     }
 
-    private void showMap(@DrawableRes int resId) {
+   /* private void showMap(@DrawableRes int resId) {
         if (decodeMapBitmapTask != null) {
             decodeMapBitmapTask.cancel(true);
         }
@@ -269,7 +269,7 @@ public class AttractionFragment extends Fragment {
 
         decodeMapBitmapTask = new DecodeBitmapTask(getResources(), resId, w, h, mapLoadListener);
         decodeMapBitmapTask.execute();
-    }
+    }*/
 
     private class TextViewFactory implements  ViewSwitcher.ViewFactory {
 
@@ -318,35 +318,29 @@ public class AttractionFragment extends Fragment {
     private class OnCardClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            final CardSliderLayoutManager lm =  (CardSliderLayoutManager) recyclerView.getLayoutManager();
-
+           // startActivity(new Intent(getActivity(),TransportFragment.class));
+          final CardSliderLayoutManager lm =  (CardSliderLayoutManager) recyclerView.getLayoutManager();
+            final int activeCardPosition = lm.getActiveCardPosition();
+            final int clickedPosition = recyclerView.getChildAdapterPosition(view);
             if (lm.isSmoothScrolling()) {
                 return;
             }
 
-            final int activeCardPosition = lm.getActiveCardPosition();
             if (activeCardPosition == RecyclerView.NO_POSITION) {
                 return;
             }
-
-            final int clickedPosition = recyclerView.getChildAdapterPosition(view);
-            if (clickedPosition == activeCardPosition) {
-                final Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra(DetailsActivity.BUNDLE_IMAGE_ID, pics[activeCardPosition % pics.length]);
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent);
-                } else {
-                    final CardView cardView = (CardView) view;
-                    final View sharedView = cardView.getChildAt(cardView.getChildCount() - 1);
-                    final ActivityOptions options = ActivityOptions
-                            .makeSceneTransitionAnimation(getActivity(), sharedView, "shared");
-                    startActivity(intent, options.toBundle());
-                }
-            } else if (clickedPosition > activeCardPosition) {
+            if (clickedPosition > activeCardPosition) {
                 recyclerView.smoothScrollToPosition(clickedPosition);
                 onActiveCardChange(clickedPosition);
             }
+
+            if (clickedPosition == activeCardPosition) {
+                final Intent intent = new Intent(getActivity(),PlaceDetail.class);
+                intent.putExtra("position",places[clickedPosition%places.length]);
+                startActivity(intent);
+
+            }
+
         }
     }
 

@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
         resturants.setOnClickListener(tabclick);
         shopping.setOnClickListener(tabclick);
 
-        auth = FirebaseAuth.getInstance();
+        /*auth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -65,7 +65,7 @@ public class HomeFragment extends Fragment {
                     startActivity(new Intent(getActivity(),StartPageActivity.class));
                 }
             }
-        };
+        };*/
         getActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_frame,new HomeDefaultFragment()).commit();
 
         logOutBtn.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        auth.addAuthStateListener(authStateListener);
+     //   auth.addAuthStateListener(authStateListener);
     }
 
     public View.OnClickListener tabclick = new View.OnClickListener() {
