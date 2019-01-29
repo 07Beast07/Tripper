@@ -34,15 +34,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -70,9 +74,9 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
     DatabaseReference databaseReference;
     BusStationModel busStationModel;
     ArrayList<BusNumberModel> busNumberData = new ArrayList<>();
-    ArrayList<LatLng> latLngs = new ArrayList<>();  //Use this to mark location
+    ArrayList<Marker> markers = new ArrayList<>();
+    ArrayList<AllBusDataFromFirebase> latLngs = new ArrayList<>();  //Use this to mark location
     private MarkerOptions options = new MarkerOptions();
-    AllBusDataFromFirebase BusDataFromFirebase = new AllBusDataFromFirebase();
 
 
     @Nullable
@@ -123,7 +127,7 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void getCurrentLocation() {
-        mMap.clear();
+
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -198,27 +202,46 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
                 @Override
                 public void onResponse(Call<List<BusNumberModel>> call, Response<List<BusNumberModel>> response) {
                     busNumberData = (ArrayList<BusNumberModel>) response.body();
-                    databaseReference.child("driver").addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    databaseReference.child("driver").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (int i = 0; i < busNumberData.size(); i++) {
 
+                            for (int i = 0; i < busNumberData.size(); i++) {
                                 String BusNo = busNumberData.get(i).getNumber();
+                                Log.i("hahaha",BusNo);
                                 Double lat = Double.valueOf(dataSnapshot.child(BusNo).child("latitude").getValue(String.class));
                                 Double lang = Double.valueOf(dataSnapshot.child(BusNo).child("longitude").getValue(String.class));
-                                latLngs.add(i, new LatLng(lat, lang));
-                            }
 
-                            int i = 0;
-                            for (LatLng point : latLngs) {
-                                Log.i("lalala", String.valueOf(point));
-                                options.position(point);
-                                options.title(busNumberData.get(i).getNumber());
-                                mMap.addMarker(options)
-                                        .setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-                                onPositionChanged(point, busNumberData.get(i).getNumber());
-                                i++;
-                            }
+                                Marker marker;
+
+                                    LatLng point = new LatLng(lat,lang);
+                                    if (!mMarkers.containsKey(BusNo)) {
+                                        marker=mMap.addMarker(new MarkerOptions().position(point).title(BusNo));
+                                       marker.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                                        mMarkers.put(BusNo,marker);
+
+                                    } else {
+                                        mMarkers.get(BusNo).setPosition(point);
+                                    }
+
+
+                                }
+
+//                            for (AllBusDataFromFirebase latlang : latLngs) {
+//                                count--;
+//                                LatLng point = new LatLng(latlang.getLatitude(),latlang.getLongitude());
+//                                if(marker == null){
+//                                    marker = mMap.addMarker(new MarkerOptions().position(point).title(latlang.getBusno()));
+//                                    markers.add(count,marker);
+//                                    markers.get(count).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+//                                }else {
+//                                    marker.setPosition(point);
+//                                }
+//
+//
+//                            }
+//                            onPositionChanged(marker);
                         }
 
                         @Override
@@ -228,7 +251,6 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
 
                 }
-
                 @Override
                 public void onFailure(Call<List<BusNumberModel>> call, Throwable t) {
                     Log.i("error", t.getMessage().toString());
@@ -239,23 +261,29 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private Marker marker;
+    private HashMap<String, Marker> mMarkers = new HashMap<>();
 
-    public void onPositionChanged(LatLng buses, String busNo) {
-
-        int height = 80;
-        int width = 80;
-        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.bus_icon);
-        Bitmap b = bitmapdraw.getBitmap();
-        final Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-
-
-        if (marker == null) {
-            mMap.addMarker(new MarkerOptions().position(buses).title(busNo)).setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-        } else {
-            marker.setPosition(buses);
-        }
-    }
+//    private void setMarker(DataSnapshot dataSnapshot, String BusNo) {
+//        // When a location update is received, put or update
+//        // its value in mMarkers, which contains all the markers
+//        // for locations received, so that we can build the
+//        // boundaries required to show them all on the map at once
+//        String key = BusNo;
+//        HashMap<String, Object> value = (HashMap<String, Object>) dataSnapshot.getValue();
+//        double lat = Double.parseDouble(value.get("latitude").toString());
+//        double lng = Double.parseDouble(value.get("longitude").toString());
+//        LatLng location = new LatLng(lat, lng);
+//        if (!mMarkers.containsValue(key)) {
+//            mMarkers.put(key, mMap.addMarker(new MarkerOptions().title(key).position(location)));
+//        } else {
+//            mMarkers.get(key).setPosition(location);
+//        }
+//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+//        for (Marker marker : mMarkers.values()) {
+//            builder.include(marker.getPosition());
+//        }
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
+//    }
 
 
     @Override
