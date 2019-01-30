@@ -5,14 +5,11 @@ import java.util.ArrayList;
 public class AllBusDataFromFirebase {
 
     String busno;
-    String latitude;
-    String longitude;
+    Double latitude;
+    Double longitude;
 
-    public AllBusDataFromFirebase(){
 
-    }
-
-    public AllBusDataFromFirebase(String busno, String latitude, String longitude) {
+    public AllBusDataFromFirebase(String busno, Double latitude, Double longitude) {
         this.busno = busno;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -26,19 +23,19 @@ public class AllBusDataFromFirebase {
         this.busno = busno;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 }
