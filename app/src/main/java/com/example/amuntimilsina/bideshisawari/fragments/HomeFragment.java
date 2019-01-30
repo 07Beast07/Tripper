@@ -1,11 +1,14 @@
 package com.example.amuntimilsina.bideshisawari.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.amuntimilsina.bideshisawari.R;
+import com.example.amuntimilsina.bideshisawari.StartPageActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
@@ -22,8 +26,9 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 public class HomeFragment extends Fragment {
 
     ImageView logOutBtn;
-    FirebaseAuth auth;
-    FirebaseAuth.AuthStateListener authStateListener;
+//    FirebaseAuth auth;
+//    FirebaseAuth.AuthStateListener authStateListener;
+    SharedPreferences sharedPreferences;
     FrameLayout frameLayout;
     LinearLayout parks, attraction, resturants, shopping;
     TextView parkstext, shoppingtext, resturanttext, attractiontext;
@@ -34,6 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        sharedPreferences = this.getActivity().getSharedPreferences("user_info",0);
         line = view.findViewById(R.id.line);
         parksImage = view.findViewById(R.id.parks_icon);
         shoppingImage = view.findViewById(R.id.shopping_icon);
@@ -53,6 +59,8 @@ public class HomeFragment extends Fragment {
         attraction.setOnClickListener(tabclick);
         resturants.setOnClickListener(tabclick);
         shopping.setOnClickListener(tabclick);
+
+        Log.i("blala",sharedPreferences.getString("phone",""));
 
         /*auth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -84,7 +92,11 @@ public class HomeFragment extends Fragment {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            auth.signOut();
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.remove("phone").commit();
+                            startActivity(new Intent(getActivity(),StartPageActivity.class));
+//                          auth.signOut();
+
                         }
                     })
                     .setNegativeButton("No", null)

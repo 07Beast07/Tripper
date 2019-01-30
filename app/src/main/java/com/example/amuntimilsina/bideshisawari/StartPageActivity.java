@@ -1,6 +1,7 @@
 package com.example.amuntimilsina.bideshisawari;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -24,19 +25,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class StartPageActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class StartPageActivity extends AppCompatActivity
+//        implements GoogleApiClient.OnConnectionFailedListener
+          {
 
     private Button signInGoogleBtn;
     private Button signInBtn;
-    private GoogleApiClient googleApiClient;
+    SharedPreferences sharedPreferences;
+//    private GoogleApiClient googleApiClient;
     private static final int REQ_CODE = 101;
-    private FirebaseAuth auth;
-    private FirebaseAuth.AuthStateListener authStateListener;
+//    private FirebaseAuth auth;
+//    private FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
     protected void onStart() {
         super.onStart();
-        auth.addAuthStateListener(authStateListener);
+//        auth.addAuthStateListener(authStateListener);
     }
 
     @Override
@@ -45,16 +49,20 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
         setContentView(R.layout.activity_start_page);
         signInBtn = findViewById(R.id.signInBtn);
         signInGoogleBtn = findViewById(R.id.sign_in_google);
-        auth = FirebaseAuth.getInstance();
-
-        authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser() != null){
-                    startActivity(new Intent(StartPageActivity.this,HomeActivity.class));
-                }
-            }
-        };
+        sharedPreferences = getSharedPreferences("user_info",0);
+        if(!sharedPreferences.getString("phone","").equals("")){
+            startActivity(new Intent(StartPageActivity.this,HomeActivity.class));
+        }
+//        auth = FirebaseAuth.getInstance();
+//
+//        authStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                if(firebaseAuth.getCurrentUser() != null){
+//                    startActivity(new Intent(StartPageActivity.this,HomeActivity.class));
+//                }
+//            }
+//        };
 
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,58 +72,58 @@ public class StartPageActivity extends AppCompatActivity implements GoogleApiCli
         });
 
 
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
-        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
+//        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
+//        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
 
         signInGoogleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                startActivityForResult(intent,REQ_CODE);
+//                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+//                startActivityForResult(intent,REQ_CODE);
             }
         });
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(StartPageActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//        Toast.makeText(StartPageActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+//    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQ_CODE){
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleResult(result);
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode == REQ_CODE){
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            handleResult(result);
+//        }
+//    }
 
-    private void handleResult(GoogleSignInResult result) {
-        if(result.isSuccess()){
-            GoogleSignInAccount account = result.getSignInAccount();
-            signUpTask(account);
+//    private void handleResult(GoogleSignInResult result) {
+//        if(result.isSuccess()){
+//            GoogleSignInAccount account = result.getSignInAccount();
+//            signUpTask(account);
+//
+//        }else{
+//            Toast.makeText(StartPageActivity.this, "Auth went wrong!", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-        }else{
-            Toast.makeText(StartPageActivity.this, "Auth went wrong!", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void signUpTask(GoogleSignInAccount account) {
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    FirebaseUser user = auth.getCurrentUser();
-
-                }else {
-                    Toast.makeText(StartPageActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-    }
+//    private void signUpTask(GoogleSignInAccount account) {
+//
+//        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+//        auth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                if(task.isSuccessful()){
+//                    FirebaseUser user = auth.getCurrentUser();
+//
+//                }else {
+//                    Toast.makeText(StartPageActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//    }
 
 
 

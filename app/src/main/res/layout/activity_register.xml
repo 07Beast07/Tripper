@@ -81,8 +81,8 @@
                 android:textColorHint="#fff"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:drawableLeft="@drawable/ic_account_circle_black_24dp"
-                android:hint="USERNAME"
+                android:drawableLeft="@drawable/ic_phone_black_24dp"
+                android:hint="PHONE NUMBER"
                 android:singleLine="true"
                 android:imeOptions="actionNext"
                 android:maxLines="1"/>
