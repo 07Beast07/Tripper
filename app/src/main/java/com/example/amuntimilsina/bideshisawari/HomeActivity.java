@@ -3,6 +3,8 @@ package com.example.amuntimilsina.bideshisawari;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,12 +12,15 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.amuntimilsina.bideshisawari.fragments.HomeFragment;
 import com.example.amuntimilsina.bideshisawari.fragments.MoreOptionFragment;
 import com.example.amuntimilsina.bideshisawari.fragments.PaymentFragment;
 import com.example.amuntimilsina.bideshisawari.fragments.TransportFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class HomeActivity extends AppCompatActivity {
     ImageView homeImg,transportImg,NFCImg,moreOptionImg;
@@ -102,4 +107,17 @@ public class HomeActivity extends AppCompatActivity {
 
         }
     };
+
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+//        if(result != null){
+//            FragmentManager fm = getSupportFragmentManager();
+//            Fragment newFrame = PaymentFragment.newInstance(result.getContents().toString());
+//            fm.beginTransaction().replace(R.id.frame, newFrame).commit();
+//        }
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 }

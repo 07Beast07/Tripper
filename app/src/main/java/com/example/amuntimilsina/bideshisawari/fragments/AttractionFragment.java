@@ -23,12 +23,18 @@ import android.widget.ViewSwitcher;
 
 import com.example.amuntimilsina.bideshisawari.Helper.CardSliderLayoutManager;
 import com.example.amuntimilsina.bideshisawari.Helper.CardSnapHelper;
+import com.example.amuntimilsina.bideshisawari.Helper.DataParser;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
+import com.example.amuntimilsina.bideshisawari.Helper.DownloadUrl;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
 import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
+import com.google.android.gms.maps.GoogleMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class AttractionFragment extends Fragment {
     //private final int[][] dotCoords = new int[5][2];
@@ -42,6 +48,8 @@ public class AttractionFragment extends Fragment {
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
+    private ArrayList<Double> lat = new ArrayList<>();
+    private ArrayList<Double> lang = new ArrayList<>();
 
     private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new AttractionFragment.OnCardClickListener());
 
@@ -49,7 +57,8 @@ public class AttractionFragment extends Fragment {
     private RecyclerView recyclerView;
     private TextSwitcher temperatureSwitcher;
     private TextSwitcher ratingSwitcher;
-
+    double mainlat=27.674436;
+    double mainlang=85.365128;
     private TextView place1TextView;
     private TextView place2TextView;
     private int placeOffset1;
@@ -66,12 +75,29 @@ public class AttractionFragment extends Fragment {
         initRecyclerView(view);
         initCountryText(view);
         initSwitchers(view);
-        //initGreenDot(view);
         return view;
     }
-
+   /* public void datafinalize(ArrayList<String> rating,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
+        this.rating=rating;
+        this.place=place;
+        this.temperature=temperature;
+        this.lat=lat;
+        this.lang=lang;
+        Log.i("11datafinalizaton",""+place.size());
+        if(place.size()>0) {
+            initRecyclerView(getView());
+            initCountryText(getView());
+            initSwitchers(getView());
+        }
+    }*/
     //Data initialization of places and its info
     private void initData() {
+        /*String url=getUrl(mainlat,mainlang);
+        Object datat[]=new Object[1];
+        datat[0]=url;
+        Log.i("one",""+datat[0]);
+        GetNearbyPlace getNearbyPlace=new GetNearbyPlace();
+        getNearbyPlace.execute(datat);*/
         rating.add("4.3");
         rating.add("2.3");
         rating.add("3.0");
@@ -356,4 +382,60 @@ public class AttractionFragment extends Fragment {
         }
     }
 
+   /* public class GetNearbyPlace extends AsyncTask<Object,String,String> {
+
+        String googlePlacesData;
+        GoogleMap googleMap;
+        String url;
+        @Override
+        protected String doInBackground(Object... objects) {
+          //  googleMap= (GoogleMap) objects[0];
+            url= (String) objects[0];
+            DownloadUrl downloadUrl=new DownloadUrl();
+            try {
+                googlePlacesData=downloadUrl.readUrl(url);
+                Log.i("passcccheck",""+googlePlacesData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return googlePlacesData;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            List<HashMap<String, String>> nearbyPlaceList;
+            DataParser parser = new DataParser();
+            nearbyPlaceList = parser.parse(s);
+            Log.i("cccheck",""+nearbyPlaceList);
+
+            showNearbyPlaces(nearbyPlaceList);
+        }
+        private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
+        {
+            for(int i = 0; i < nearbyPlaceList.size(); i++)
+            {
+                HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
+                 place.add(googlePlace.get("Place_Name"));
+                 lat.add(Double.parseDouble( googlePlace.get("lat")));
+                 lang.add(Double.parseDouble( googlePlace.get("lang")));
+                 temperature.add(googlePlace.get("Vicinity"));
+                 rating.add(googlePlace.get("rating"));
+                 temperature.add(googlePlace.get("Vicinity"));
+                 Log.i("finaldata",""+place);
+                *//*String vicinity = googlePlace.get("vicinity");
+                double lat = Double.parseDouble( googlePlace.get("lat"));
+                double lng = Double.parseDouble( googlePlace.get("lng"));*//*
+            }
+            datafinalize(rating,place,temperature,lat,lang);
+        }
+    }
+    public String getUrl(double lat,double lang)
+    {
+        StringBuilder googlePlaceUrl=new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location="+lat+","+lang);
+        googlePlaceUrl.append("&radius=1000&key="+"AIzaSyAcSkMHAEdafLQT7LvTlJflrDwLfMdu6sU");
+        Log.i("dataaaa",googlePlaceUrl.toString());
+        return googlePlaceUrl.toString();
+
+    }*/
 }
