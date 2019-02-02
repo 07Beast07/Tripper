@@ -3,7 +3,9 @@ package com.example.amuntimilsina.bideshisawari.fragments;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,23 +13,35 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.example.amuntimilsina.bideshisawari.Helper.CardSliderLayoutManager;
 import com.example.amuntimilsina.bideshisawari.Helper.CardSnapHelper;
+import com.example.amuntimilsina.bideshisawari.Helper.DataParser;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
+import com.example.amuntimilsina.bideshisawari.Helper.DownloadUrl;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
 import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.GoogleMap;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class ParksFragment extends Fragment {
     // private final int[][] dotCoords = new int[5][2];
@@ -40,9 +54,12 @@ public class ParksFragment extends Fragment {
     //private final String[] times = {"Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00"};
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
+    private ArrayList<String> place_id = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
+    private ArrayList<Double> lat = new ArrayList<>();
+    private ArrayList<Double> lang = new ArrayList<>();
 
-    private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new OnCardClickListener());
+    private  SliderAdapter sliderAdapter;
 
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
@@ -52,7 +69,8 @@ public class ParksFragment extends Fragment {
     private TextSwitcher clockSwitcher;
     private TextSwitcher descriptionsSwitcher;
     private View greenDot;
-
+    double mainlat=27.674436;
+    double mainlang=85.365128;
     private TextView place1TextView;
     private TextView place2TextView;
     private int placeOffset1;
@@ -66,27 +84,34 @@ public class ParksFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_parks, container, false);
         initData();
-        initRecyclerView(view);
-        initCountryText(view);
-        initSwitchers(view);
         // initGreenDot(view);
 
         return view;
     }
 
+    public void datafinalize(ArrayList<String> rating,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
+        this.rating=rating;
+        this.place=place;
+        this.temperature=temperature;
+        this.lat=lat;
+        this.lang=lang;
+        this.place_id=place_id;
+        sliderAdapter = new SliderAdapter(pics, place.size(), new ParksFragment.OnCardClickListener());
+        Log.i("11datafinalizaton",""+place.size());
+        if(place.size()>0) {
+            initRecyclerView(getView());
+            initCountryText(getView());
+            initSwitchers(getView());
+        }
+    }
+    //Data initialization of places and its info
     private void initData() {
-        rating.add("4.3");
-        rating.add("2.3");
-        rating.add("3.0");
-        rating.add("5.0");
-        place.add("Bkt durbar");
-        place.add("Dharara");
-        place.add("Bagmati");
-        place.add("Lumbini");
-        temperature.add("21°C");
-        temperature.add("11°C");
-        temperature.add("9°C");
-        temperature.add("44°C");
+        String url=getUrl(mainlat,mainlang);
+        Object datat[]=new Object[1];
+        datat[0]=url;
+        Log.i("one",""+datat[0]);
+        ParksFragment.GetNearbyPlace getNearbyPlace=new ParksFragment.GetNearbyPlace();
+        getNearbyPlace.execute(datat);
     }
 
     private void initRecyclerView(View view) {
@@ -117,31 +142,30 @@ public class ParksFragment extends Fragment {
     }
 
     private void initSwitchers(View view) {
-        temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
-        temperatureSwitcher.setFactory(new TextViewFactory(R.style.TemperatureTextView, true));
+      /*  temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
+        temperatureSwitcher.setFactory(new ParksFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperature.get(0));
-
+*/
         ratingSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
-        ratingSwitcher.setFactory(new TextViewFactory(R.style.PlaceTextView, false));
+        ratingSwitcher.setFactory(new ParksFragment.TextViewFactory(R.style.PlaceTextView, false));
         ratingSwitcher.setCurrentText(rating.get(0));
 
+        //clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
+        //clockSwitcher.setFactory(new ParksFragment.TextViewFactory(R.style.ClockTextView, false));
+        //clockSwitcher.setCurrentText(times[0]);
 
-        /*clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
-        clockSwitcher.setFactory(new TextViewFactory(R.style.ClockTextView, false));
-        clockSwitcher.setCurrentText(times[0]);
-
-        descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
+       /* descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
         descriptionsSwitcher.setInAnimation(getActivity(), android.R.anim.fade_in);
         descriptionsSwitcher.setOutAnimation(getActivity(), android.R.anim.fade_out);
-        descriptionsSwitcher.setFactory(new TextViewFactory(R.style.DescriptionTextView, false));
-        descriptionsSwitcher.setCurrentText(getString(descriptions[0]));
+        descriptionsSwitcher.setFactory(new ParksFragment.TextViewFactory(R.style.DescriptionTextView, false));
+        descriptionsSwitcher.setCurrentText(getString(descriptions[0]));*/
 
-        mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
+      /*  mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
         mapSwitcher.setInAnimation(getActivity(), R.anim.fade_in);
         mapSwitcher.setOutAnimation(getActivity(), R.anim.fade_out);
-        mapSwitcher.setFactory(new ImageViewFactory());
-        mapSwitcher.setImageResource(maps[0]);
-
+        mapSwitcher.setFactory(new ParksFragment.ImageViewFactory());
+        mapSwitcher.setImageResource(maps[0]);*/
+/*
         mapLoadListener = new DecodeBitmapTask.Listener() {
             @Override
             public void onPostExecuted(Bitmap bitmap) {
@@ -167,7 +191,7 @@ public class ParksFragment extends Fragment {
         place2TextView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "open-sans-extrabold.ttf"));
     }
 
-    /*private void initGreenDot(final View view) {
+   /* private void initGreenDot(final View view) {
         mapSwitcher.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
@@ -233,7 +257,6 @@ public class ParksFragment extends Fragment {
         if (pos == RecyclerView.NO_POSITION || pos == currentPosition) {
             return;
         }
-
         onActiveCardChange(pos);
     }
 
@@ -252,15 +275,15 @@ public class ParksFragment extends Fragment {
 
         setCountryText(place.get(pos % place.size()), left2right);
 
-        temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
+        /*temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
         temperatureSwitcher.setOutAnimation(getActivity(), animH[1]);
-        temperatureSwitcher.setText(temperature.get(pos % temperature.size()));
+        temperatureSwitcher.setText(temperature.get(pos % temperature.size()));*/
 
         ratingSwitcher.setInAnimation(getActivity(), animV[0]);
         ratingSwitcher.setOutAnimation(getActivity(), animV[1]);
         ratingSwitcher.setText(rating.get(pos % rating.size()));
 
-        /*clockSwitcher.setInAnimation(getActivity(), animV[0]);
+       /* clockSwitcher.setInAnimation(getActivity(), animV[0]);
         clockSwitcher.setOutAnimation(getActivity(), animV[1]);
         clockSwitcher.setText(times[pos % times.length]);
 
@@ -276,7 +299,7 @@ public class ParksFragment extends Fragment {
         currentPosition = pos;
     }
 
-  /*  private void showMap(@DrawableRes int resId) {
+   /* private void showMap(@DrawableRes int resId) {
         if (decodeMapBitmapTask != null) {
             decodeMapBitmapTask.cancel(true);
         }
@@ -319,21 +342,23 @@ public class ParksFragment extends Fragment {
 
     }
 
-    /* private class ImageViewFactory implements ViewSwitcher.ViewFactory {
-         @Override
-         public View makeView() {
-             final ImageView imageView = new ImageView(getActivity());
-             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+    private class ImageViewFactory implements ViewSwitcher.ViewFactory {
+        @Override
+        public View makeView() {
+            final ImageView imageView = new ImageView(getActivity());
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-             final ViewGroup.LayoutParams lp = new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-             imageView.setLayoutParams(lp);
+            final ViewGroup.LayoutParams lp = new ImageSwitcher.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            imageView.setLayoutParams(lp);
 
-             return imageView;
-         }
-     }*/
+            return imageView;
+        }
+    }
+
     private class OnCardClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            // startActivity(new Intent(getActivity(),TransportFragment.class));
             final CardSliderLayoutManager lm = (CardSliderLayoutManager) recyclerView.getLayoutManager();
             final int activeCardPosition = lm.getActiveCardPosition();
             final int clickedPosition = recyclerView.getChildAdapterPosition(view);
@@ -358,4 +383,100 @@ public class ParksFragment extends Fragment {
 
         }
     }
-}
+
+    public class GetNearbyPlace extends AsyncTask<Object,String,String> {
+
+        String googlePlacesData;
+        GoogleMap googleMap;
+        String url;
+        @Override
+        protected String doInBackground(Object... objects) {
+            //  googleMap= (GoogleMap) objects[0];
+            url= (String) objects[0];
+            DownloadUrl downloadUrl=new DownloadUrl();
+            try {
+                googlePlacesData=downloadUrl.readUrl(url);
+                Log.i("passcccheck",""+googlePlacesData);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return googlePlacesData;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            List<HashMap<String, String>> nearbyPlaceList;
+            DataParser parser = new DataParser();
+            nearbyPlaceList = parser.parse(s);
+            Log.i("cccheck",""+nearbyPlaceList);
+
+            showNearbyPlaces(nearbyPlaceList);
+        }
+        private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
+        {
+            for(int i = 0; i < nearbyPlaceList.size(); i++)
+            {
+                HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
+                place.add(googlePlace.get("Place_Name"));
+                lat.add(Double.parseDouble( googlePlace.get("lat")));
+                lang.add(Double.parseDouble( googlePlace.get("lang")));
+                temperature.add(googlePlace.get("Vicinity"));
+                rating.add(googlePlace.get("rating"));
+                temperature.add(googlePlace.get("Vicinity"));
+                place_id.add(googlePlace.get("place_id"));
+                Log.i("finaldata",""+place);
+                //String vicinity = googlePlace.get("vicinity");
+                /*double lat = Double.parseDouble( googlePlace.get("lat"));
+                double lng = Double.parseDouble( googlePlace.get("lng"));*/
+            }
+            datafinalize(rating,place_id,place,temperature,lat,lang);
+        }
+    }
+    public String getUrl(double lat,double lang)
+    {
+        StringBuilder googlePlaceUrl=new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        googlePlaceUrl.append("location="+lat+","+lang);
+        googlePlaceUrl.append("&type=hospital&radius=1000&key="+"AIzaSyCGqN6I6P5cRkgFibX7sVZ6GIgV_r0ybpI");
+        Log.i("dataaaa",googlePlaceUrl.toString());
+        return googlePlaceUrl.toString();
+
+    }
+    /*public void foto()
+    {
+        // Define a Place ID.
+        String placeId = "INSERT_PLACE_ID_HERE";
+
+// Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
+        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+
+// Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
+        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+
+        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
+            Place place = response.getPlace();
+
+            // Get the photo metadata.
+            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
+
+            // Get the attribution text.
+            String attributions = photoMetadata.getAttributions();
+
+            // Create a FetchPhotoRequest.
+            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .setMaxWidth(500) // Optional.
+                    .setMaxHeight(300) // Optional.
+                    .build();
+            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
+                Bitmap bitmap = fetchPhotoResponse.getBitmap();
+                imageView.setImageBitmap(bitmap);
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    ApiException apiException = (ApiException) exception;
+                    int statusCode = apiException.getStatusCode();
+                    // Handle error with given status code.
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+            });
+        });
+    }
+*/}

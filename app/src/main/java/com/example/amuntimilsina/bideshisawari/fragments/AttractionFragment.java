@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.example.amuntimilsina.bideshisawari.Helper.CardSnapHelper;
 import com.example.amuntimilsina.bideshisawari.Helper.DataParser;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
 import com.example.amuntimilsina.bideshisawari.Helper.DownloadUrl;
+import com.example.amuntimilsina.bideshisawari.Helper.GetNearbyPlace;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
 import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
@@ -48,11 +51,10 @@ public class AttractionFragment extends Fragment {
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
+    private ArrayList<String> place_id = new ArrayList<>();
     private ArrayList<Double> lat = new ArrayList<>();
     private ArrayList<Double> lang = new ArrayList<>();
-
-    private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new AttractionFragment.OnCardClickListener());
-
+    private  SliderAdapter sliderAdapter;
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
     private TextSwitcher temperatureSwitcher;
@@ -72,44 +74,34 @@ public class AttractionFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_places, container, false);
         initData();
-        initRecyclerView(view);
+        /*initRecyclerView(view);
         initCountryText(view);
-        initSwitchers(view);
+        initSwitchers(view);*/
         return view;
     }
-   /* public void datafinalize(ArrayList<String> rating,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
+    public void datafinalize(ArrayList<String> rating,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
         this.rating=rating;
         this.place=place;
+        this.place_id=place_id;
         this.temperature=temperature;
         this.lat=lat;
         this.lang=lang;
+        sliderAdapter = new SliderAdapter(pics, place.size(), new AttractionFragment.OnCardClickListener());
         Log.i("11datafinalizaton",""+place.size());
         if(place.size()>0) {
             initRecyclerView(getView());
             initCountryText(getView());
             initSwitchers(getView());
         }
-    }*/
+    }
     //Data initialization of places and its info
     private void initData() {
-        /*String url=getUrl(mainlat,mainlang);
+        String url=getUrl(mainlat,mainlang);
         Object datat[]=new Object[1];
         datat[0]=url;
         Log.i("one",""+datat[0]);
         GetNearbyPlace getNearbyPlace=new GetNearbyPlace();
-        getNearbyPlace.execute(datat);*/
-        rating.add("4.3");
-        rating.add("2.3");
-        rating.add("3.0");
-        rating.add("5.0");
-        place.add("Bkt durbar");
-        place.add("Dharara");
-        place.add("Bagmati");
-        place.add("Lumbini");
-        temperature.add("21°C");
-        temperature.add("11°C");
-        temperature.add("9°C");
-        temperature.add("44°C");
+        getNearbyPlace.execute(datat);
     }
 
     private void initRecyclerView(View view) {
@@ -140,10 +132,10 @@ public class AttractionFragment extends Fragment {
     }
 
     private void initSwitchers(View view) {
-        temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
+      /*  temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
         temperatureSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperature.get(0));
-
+*/
         ratingSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
         ratingSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.PlaceTextView, false));
         ratingSwitcher.setCurrentText(rating.get(0));
@@ -273,9 +265,9 @@ public class AttractionFragment extends Fragment {
 
         setCountryText(place.get(pos % place.size()), left2right);
 
-        temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
+        /*temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
         temperatureSwitcher.setOutAnimation(getActivity(), animH[1]);
-        temperatureSwitcher.setText(temperature.get(pos % temperature.size()));
+        temperatureSwitcher.setText(temperature.get(pos % temperature.size()));*/
 
         ratingSwitcher.setInAnimation(getActivity(), animV[0]);
         ratingSwitcher.setOutAnimation(getActivity(), animV[1]);
@@ -382,7 +374,7 @@ public class AttractionFragment extends Fragment {
         }
     }
 
-   /* public class GetNearbyPlace extends AsyncTask<Object,String,String> {
+    public class GetNearbyPlace extends AsyncTask<Object,String,String> {
 
         String googlePlacesData;
         GoogleMap googleMap;
@@ -421,21 +413,22 @@ public class AttractionFragment extends Fragment {
                  temperature.add(googlePlace.get("Vicinity"));
                  rating.add(googlePlace.get("rating"));
                  temperature.add(googlePlace.get("Vicinity"));
+                place_id.add(googlePlace.get("place_id"));
                  Log.i("finaldata",""+place);
-                *//*String vicinity = googlePlace.get("vicinity");
-                double lat = Double.parseDouble( googlePlace.get("lat"));
-                double lng = Double.parseDouble( googlePlace.get("lng"));*//*
+                //String vicinity = googlePlace.get("vicinity");
+                /*double lat = Double.parseDouble( googlePlace.get("lat"));
+                double lng = Double.parseDouble( googlePlace.get("lng"));*/
             }
-            datafinalize(rating,place,temperature,lat,lang);
+            datafinalize(rating,place_id,place,temperature,lat,lang);
         }
     }
     public String getUrl(double lat,double lang)
     {
         StringBuilder googlePlaceUrl=new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlaceUrl.append("location="+lat+","+lang);
-        googlePlaceUrl.append("&radius=1000&key="+"AIzaSyAcSkMHAEdafLQT7LvTlJflrDwLfMdu6sU");
+        googlePlaceUrl.append("&type=restaurant&radius=1000&key="+"AIzaSyAcSkMHAEdafLQT7LvTlJflrDwLfMdu6sU");
         Log.i("dataaaa",googlePlaceUrl.toString());
         return googlePlaceUrl.toString();
 
-    }*/
+    }
 }
