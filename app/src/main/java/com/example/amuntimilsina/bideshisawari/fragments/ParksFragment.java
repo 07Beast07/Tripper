@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
@@ -40,35 +41,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import com.example.amuntimilsina.bideshisawari.NearbyMapsActivity;
 
-import static android.support.constraint.Constraints.TAG;
 
 public class ParksFragment extends Fragment {
-    // private final int[][] dotCoords = new int[5][2];
+    //private final int[][] dotCoords = new int[5][2];
     private final int[] pics = {R.drawable.p1, R.drawable.p2, R.drawable.p3, R.drawable.p4, R.drawable.p5};
-    // private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
-    // private final int[] descriptions = {R.string.text1, R.string.text2, R.string.text3, R.string.text4, R.string.text5};
-    // private final String[] countries = {"PARIS", "SEOUL", "LONDON", "BEIJING", "THIRA"};
+    //private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
+    //private final int[] descriptions = {R.string.text1, R.string.text2, R.string.text3, R.string.text4, R.string.text5};
+    //private final String[] countries = {"PARIS", "SEOUL", "LONDON", "BEIJING", "THIRA"};
     //private final String[] places = {"The Louvre", "Gwanghwamun", "Tower Bridge", "Temple of Heaven", "Aegeana Sea"};
     //private final String[] temperatures = {"21°C", "19°C", "17°C", "23°C", "20°C"};
     //private final String[] times = {"Aug 1 - Dec 15    7:00-18:00", "Sep 5 - Nov 10    8:00-16:00", "Mar 8 - May 21    7:00-18:00"};
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
-    private ArrayList<String> place_id = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
-    private ArrayList<Double> lat = new ArrayList<>();
-    private ArrayList<Double> lang = new ArrayList<>();
-
+    private ArrayList<String> place_id = new ArrayList<>();
+    private ArrayList<String> photo = new ArrayList<>();
+    private ArrayList<String> lat = new ArrayList<>();
+    private ArrayList<String> lang = new ArrayList<>();
     private  SliderAdapter sliderAdapter;
-
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
-    private ImageSwitcher mapSwitcher;
     private TextSwitcher temperatureSwitcher;
     private TextSwitcher ratingSwitcher;
-    private TextSwitcher clockSwitcher;
-    private TextSwitcher descriptionsSwitcher;
-    private View greenDot;
     double mainlat=27.674436;
     double mainlang=85.365128;
     private TextView place1TextView;
@@ -77,25 +73,42 @@ public class ParksFragment extends Fragment {
     private int placeOffset2;
     private long countryAnimDuration;
     private int currentPosition;
+    FrameLayout f1;
 
     private DecodeBitmapTask decodeMapBitmapTask;
     private DecodeBitmapTask.Listener mapLoadListener;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_parks, container, false);
+        View view = inflater.inflate(R.layout.fragment_places, container, false);
+        f1=view.findViewById(R.id.mapsview);
         initData();
-        // initGreenDot(view);
-
+        /*initRecyclerView(view);
+        initCountryText(view);
+        initSwitchers(view);*/
+        f1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getContext(), NearbyMapsActivity.class);
+                intent.putStringArrayListExtra("place",place);
+                intent.putStringArrayListExtra("rating",rating);
+                intent.putStringArrayListExtra("place_id",place);
+                intent.putStringArrayListExtra("lat",lat);
+                intent.putStringArrayListExtra("lang",lang);
+                intent.putStringArrayListExtra("temperature",temperature);
+                intent.putStringArrayListExtra("photo_reference",photo);
+                startActivity(intent);
+            }
+        });
         return view;
     }
-
-    public void datafinalize(ArrayList<String> rating,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
+    public void datafinalize(ArrayList<String> rating,ArrayList<String> photo,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<String> lat,ArrayList<String> lang){
         this.rating=rating;
         this.place=place;
+        this.place_id=place_id;
         this.temperature=temperature;
         this.lat=lat;
         this.lang=lang;
-        this.place_id=place_id;
+        this.photo=photo;
         sliderAdapter = new SliderAdapter(pics, place.size(), new ParksFragment.OnCardClickListener());
         Log.i("11datafinalizaton",""+place.size());
         if(place.size()>0) {
@@ -110,7 +123,7 @@ public class ParksFragment extends Fragment {
         Object datat[]=new Object[1];
         datat[0]=url;
         Log.i("one",""+datat[0]);
-        ParksFragment.GetNearbyPlace getNearbyPlace=new ParksFragment.GetNearbyPlace();
+        GetNearbyPlace getNearbyPlace=new GetNearbyPlace();
         getNearbyPlace.execute(datat);
     }
 
@@ -418,18 +431,19 @@ public class ParksFragment extends Fragment {
             {
                 HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
                 place.add(googlePlace.get("Place_Name"));
-                lat.add(Double.parseDouble( googlePlace.get("lat")));
-                lang.add(Double.parseDouble( googlePlace.get("lang")));
+                lat.add(""+Double.parseDouble( googlePlace.get("lat")));
+                lang.add(""+Double.parseDouble( googlePlace.get("lang")));
                 temperature.add(googlePlace.get("Vicinity"));
                 rating.add(googlePlace.get("rating"));
                 temperature.add(googlePlace.get("Vicinity"));
                 place_id.add(googlePlace.get("place_id"));
+                photo.add(googlePlace.get("photo_reference"));
                 Log.i("finaldata",""+place);
                 //String vicinity = googlePlace.get("vicinity");
                 /*double lat = Double.parseDouble( googlePlace.get("lat"));
                 double lng = Double.parseDouble( googlePlace.get("lng"));*/
             }
-            datafinalize(rating,place_id,place,temperature,lat,lang);
+            datafinalize(rating,photo,place_id,place,temperature,lat,lang);
         }
     }
     public String getUrl(double lat,double lang)

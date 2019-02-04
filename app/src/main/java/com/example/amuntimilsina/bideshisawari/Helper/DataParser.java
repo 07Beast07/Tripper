@@ -1,5 +1,7 @@
 package com.example.amuntimilsina.bideshisawari.Helper;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,6 +17,7 @@ public class DataParser {
         String rating="-NA-";
         String place_id="-NA-";
         String vicinity="-NA-";
+        String photo="-NA-";
         String lat="-NA-";
         String lang="-NA-";
         String reference="-NA-";
@@ -30,6 +33,10 @@ public class DataParser {
         lat=googlePlaceJSON.getJSONObject("geometry").getJSONObject("location").getString("lat");
         lang=googlePlaceJSON.getJSONObject("geometry").getJSONObject("location").getString("lng");
         reference=googlePlaceJSON.getString("reference");
+        JSONArray ref=googlePlaceJSON.getJSONArray("photos");
+        JSONObject test=ref.getJSONObject(0);
+        photo=test.getString("photo_reference");
+        Log.i("mmmmmmm",""+photo);
         rating=googlePlaceJSON.getString("rating");
         place_id=googlePlaceJSON.getString("place_id");
         googlePlaceMap.put("Place_Name",placeName);
@@ -39,6 +46,7 @@ public class DataParser {
         googlePlaceMap.put("lat",lat);
         googlePlaceMap.put("lang",lang);
         googlePlaceMap.put("reference",reference);
+        googlePlaceMap.put("photo_reference",photo);
         return googlePlaceMap;
     }
     private List<HashMap<String, String>>getAllPlaces(JSONArray jsonArray)

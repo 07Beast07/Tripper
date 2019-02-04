@@ -8,8 +8,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:layout_marginTop="20dp">
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp">
 
         <FrameLayout
             android:id="@+id/countries"
@@ -39,22 +39,23 @@
 
         </FrameLayout>
 
-        <!--<FrameLayout
+        <FrameLayout
             android:layout_width="85dp"
-            android:layout_height="match_parent"
+            android:layout_height="38dp"
             android:layout_alignParentEnd="true"
+            android:clickable="true"
             android:background="@drawable/temperature_background"
             android:layout_centerVertical="true"
-            android:id="@+id/frameLayout"
+            android:id="@+id/mapsview"
             android:layout_alignParentRight="true">
 
-            <TextSwitcher
-                android:id="@+id/ts_temperature"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:text="Maps View" />
 
-        </FrameLayout>-->
+        </FrameLayout>
 
     </RelativeLayout>
 

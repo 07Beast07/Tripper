@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
@@ -29,6 +30,7 @@ import com.example.amuntimilsina.bideshisawari.Helper.DataParser;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
 import com.example.amuntimilsina.bideshisawari.Helper.DownloadUrl;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
+import com.example.amuntimilsina.bideshisawari.NearbyMapsActivity;
 import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -51,16 +53,14 @@ public class ShoppingFragment extends Fragment {
     private ArrayList<String> place = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
     private ArrayList<String> place_id = new ArrayList<>();
-    private ArrayList<Double> lat = new ArrayList<>();
-    private ArrayList<Double> lang = new ArrayList<>();
+    private ArrayList<String> photo = new ArrayList<>();
+    private ArrayList<String> lat = new ArrayList<>();
+    private ArrayList<String> lang = new ArrayList<>();
     private  SliderAdapter sliderAdapter;
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
-    private ImageSwitcher mapSwitcher;
     private TextSwitcher temperatureSwitcher;
     private TextSwitcher ratingSwitcher;
-    private TextSwitcher clockSwitcher;
-    private TextSwitcher descriptionsSwitcher;
     double mainlat=27.674436;
     double mainlang=85.365128;
     private TextView place1TextView;
@@ -69,25 +69,42 @@ public class ShoppingFragment extends Fragment {
     private int placeOffset2;
     private long countryAnimDuration;
     private int currentPosition;
+    FrameLayout f1;
 
     private DecodeBitmapTask decodeMapBitmapTask;
     private DecodeBitmapTask.Listener mapLoadListener;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_shopping, container, false);
+        View view = inflater.inflate(R.layout.fragment_places, container, false);
+        f1=view.findViewById(R.id.mapsview);
         initData();
         /*initRecyclerView(view);
         initCountryText(view);
-        initSwitchers(view);
-       */// initGreenDot(view);
+        initSwitchers(view);*/
+        f1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getContext(), NearbyMapsActivity.class);
+                intent.putStringArrayListExtra("place",place);
+                intent.putStringArrayListExtra("rating",rating);
+                intent.putStringArrayListExtra("place_id",place);
+                intent.putStringArrayListExtra("lat",lat);
+                intent.putStringArrayListExtra("lang",lang);
+                intent.putStringArrayListExtra("temperature",temperature);
+                intent.putStringArrayListExtra("photo_reference",photo);
+                startActivity(intent);
+            }
+        });
         return view;
     }
-    public void datafinalize(ArrayList<String> rating,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<Double> lat,ArrayList<Double> lang){
+    public void datafinalize(ArrayList<String> rating,ArrayList<String> photo,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<String> lat,ArrayList<String> lang){
         this.rating=rating;
         this.place=place;
         this.place_id=place_id;
         this.temperature=temperature;
         this.lat=lat;
         this.lang=lang;
+        this.photo=photo;
         sliderAdapter = new SliderAdapter(pics, place.size(), new ShoppingFragment.OnCardClickListener());
         Log.i("11datafinalizaton",""+place.size());
         if(place.size()>0) {
@@ -110,6 +127,7 @@ public class ShoppingFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setAdapter(sliderAdapter);
         recyclerView.setHasFixedSize(true);
+
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -133,10 +151,10 @@ public class ShoppingFragment extends Fragment {
     }
 
     private void initSwitchers(View view) {
-        /*temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
+      /*  temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
         temperatureSwitcher.setFactory(new ShoppingFragment.TextViewFactory(R.style.TemperatureTextView, true));
-        temperatureSwitcher.setCurrentText(temperature.get(0));*/
-
+        temperatureSwitcher.setCurrentText(temperature.get(0));
+*/
         ratingSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
         ratingSwitcher.setFactory(new ShoppingFragment.TextViewFactory(R.style.PlaceTextView, false));
         ratingSwitcher.setCurrentText(rating.get(0));
@@ -266,7 +284,7 @@ public class ShoppingFragment extends Fragment {
 
         setCountryText(place.get(pos % place.size()), left2right);
 
-       /* temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
+        /*temperatureSwitcher.setInAnimation(getActivity(), animH[0]);
         temperatureSwitcher.setOutAnimation(getActivity(), animH[1]);
         temperatureSwitcher.setText(temperature.get(pos % temperature.size()));*/
 
@@ -409,18 +427,19 @@ public class ShoppingFragment extends Fragment {
             {
                 HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
                 place.add(googlePlace.get("Place_Name"));
-                lat.add(Double.parseDouble( googlePlace.get("lat")));
-                lang.add(Double.parseDouble( googlePlace.get("lang")));
+                lat.add(""+Double.parseDouble( googlePlace.get("lat")));
+                lang.add(""+Double.parseDouble( googlePlace.get("lang")));
                 temperature.add(googlePlace.get("Vicinity"));
                 rating.add(googlePlace.get("rating"));
                 temperature.add(googlePlace.get("Vicinity"));
                 place_id.add(googlePlace.get("place_id"));
+                photo.add(googlePlace.get("photo_reference"));
                 Log.i("finaldata",""+place);
                 //String vicinity = googlePlace.get("vicinity");
                 /*double lat = Double.parseDouble( googlePlace.get("lat"));
                 double lng = Double.parseDouble( googlePlace.get("lng"));*/
             }
-            datafinalize(rating,place_id,place,temperature,lat,lang);
+            datafinalize(rating,photo,place_id,place,temperature,lat,lang);
         }
     }
     public String getUrl(double lat,double lang)

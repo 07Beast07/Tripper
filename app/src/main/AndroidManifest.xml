@@ -23,14 +23,16 @@
         <activity android:name=".SplashActivity" />
         <activity android:name=".LoginPageActivity" />
         <activity android:name=".StartPageActivity">
+
+        </activity>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".HomeActivity"></activity>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
@@ -57,7 +59,10 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
 
-        <activity android:name=".QRScanPaymentActivity"></activity>
+        <activity android:name=".QRScanPaymentActivity" />
+        <activity
+            android:name=".NearbyMapsActivity"
+            android:label="@string/title_activity_nearby_maps"></activity>
     </application>
 
 </manifest>
