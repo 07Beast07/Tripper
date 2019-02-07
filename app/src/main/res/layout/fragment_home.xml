@@ -59,7 +59,7 @@
 
 
         <LinearLayout
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -89,7 +89,6 @@
                     android:textColor="#fff"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/resturants"
@@ -127,7 +126,7 @@
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/parks_icon"
-                    android:src="@mipmap/park_testicon"
+                    android:src="@mipmap/images"
                     app:civ_border_width="2dp"
                     android:layout_margin="10dp"
                     android:layout_width="45dp"
@@ -135,7 +134,33 @@
                 <TextView
                     android:id="@+id/parks_text"
                     android:gravity="center"
-                    android:text="Parks"
+                    android:text="Banks"
+                    android:textStyle="italic"
+                    android:textSize="12sp"
+                    android:textColor="#fff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/travel"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/travel_icon"
+                    android:src="@mipmap/travel"
+                    app:civ_border_width="2dp"
+                    android:layout_margin="10dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp" />
+                <TextView
+                    android:id="@+id/travel_text"
+                    android:gravity="center"
+                    android:text="Agency"
                     android:textStyle="italic"
                     android:textSize="12sp"
                     android:textColor="#fff"
@@ -153,7 +178,7 @@
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/shopping_icon"
-                    android:src="@mipmap/shoppinig"
+                    android:src="@mipmap/hotelll"
                     app:civ_border_width="2dp"
                     android:layout_margin="10dp"
                     android:layout_width="45dp"
@@ -176,7 +201,7 @@
         android:background="#e1e1e1"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="3dp"/>
+        android:layout_height="2dp"/>
 
     <FrameLayout
         android:id="@+id/home_frame"

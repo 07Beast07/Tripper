@@ -3,7 +3,6 @@ package com.example.amuntimilsina.bideshisawari.fragments;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +22,7 @@ import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.example.amuntimilsina.bideshisawari.Helper.CardSliderLayoutManager;
@@ -31,17 +31,25 @@ import com.example.amuntimilsina.bideshisawari.Helper.DataParser;
 import com.example.amuntimilsina.bideshisawari.Helper.DecodeBitmapTask;
 import com.example.amuntimilsina.bideshisawari.Helper.DownloadUrl;
 import com.example.amuntimilsina.bideshisawari.Helper.SliderAdapter;
+import com.example.amuntimilsina.bideshisawari.Interface.HomeInterfaces;
 import com.example.amuntimilsina.bideshisawari.PlaceDetail;
 import com.example.amuntimilsina.bideshisawari.R;
-import com.google.android.gms.common.api.ApiException;
+import com.example.amuntimilsina.bideshisawari.RetrofitInitilization.ApiClient;
+import com.example.amuntimilsina.bideshisawari.models.AttractionModel;
+import com.example.amuntimilsina.bideshisawari.models.AttractionModel2;
+import com.example.amuntimilsina.bideshisawari.models.AttractionResponseModel;
 import com.google.android.gms.maps.GoogleMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import com.example.amuntimilsina.bideshisawari.NearbyMapsActivity;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class ParksFragment extends Fragment {
@@ -56,6 +64,7 @@ public class ParksFragment extends Fragment {
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
+    private ArrayList<String> total_users = new ArrayList<>();
     private ArrayList<String> place_id = new ArrayList<>();
     private ArrayList<String> photo = new ArrayList<>();
     private ArrayList<String> lat = new ArrayList<>();
@@ -64,9 +73,10 @@ public class ParksFragment extends Fragment {
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
     private TextSwitcher temperatureSwitcher;
+    private String apikey="AIzaSyAcSkMHAEdafLQT7LvTlJflrDwLfMdu6sU";
     private TextSwitcher ratingSwitcher;
-    double mainlat=27.674436;
-    double mainlang=85.365128;
+    double mainlat=27.682123;
+    double mainlang=85.319577;
     private TextView place1TextView;
     private TextView place2TextView;
     private int placeOffset1;
@@ -74,6 +84,7 @@ public class ParksFragment extends Fragment {
     private long countryAnimDuration;
     private int currentPosition;
     FrameLayout f1;
+
 
     private DecodeBitmapTask decodeMapBitmapTask;
     private DecodeBitmapTask.Listener mapLoadListener;
@@ -96,20 +107,21 @@ public class ParksFragment extends Fragment {
                 intent.putStringArrayListExtra("lang",lang);
                 intent.putStringArrayListExtra("temperature",temperature);
                 intent.putStringArrayListExtra("photo_reference",photo);
+                Log.i("hhhhhhhhh",""+lat);
                 startActivity(intent);
             }
         });
         return view;
     }
-    public void datafinalize(ArrayList<String> rating,ArrayList<String> photo,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> temperature,ArrayList<String> lat,ArrayList<String> lang){
+    public void datafinalize(ArrayList<String> rating,ArrayList<String> total_users,ArrayList<String> photo,ArrayList<String> place_id,ArrayList<String> place,ArrayList<String> lat,ArrayList<String> lang){
         this.rating=rating;
         this.place=place;
         this.place_id=place_id;
-        this.temperature=temperature;
         this.lat=lat;
         this.lang=lang;
         this.photo=photo;
-        sliderAdapter = new SliderAdapter(pics, place.size(), new ParksFragment.OnCardClickListener());
+        this.total_users=total_users;
+        sliderAdapter = new SliderAdapter(photo, place.size(),apikey, new ParksFragment.OnCardClickListener());
         Log.i("11datafinalizaton",""+place.size());
         if(place.size()>0) {
             initRecyclerView(getView());
@@ -119,12 +131,13 @@ public class ParksFragment extends Fragment {
     }
     //Data initialization of places and its info
     private void initData() {
-        String url=getUrl(mainlat,mainlang);
+        RetrofitWork();
+        /*String url=getUrl(mainlat,mainlang);
         Object datat[]=new Object[1];
         datat[0]=url;
         Log.i("one",""+datat[0]);
         GetNearbyPlace getNearbyPlace=new GetNearbyPlace();
-        getNearbyPlace.execute(datat);
+        getNearbyPlace.execute(datat);*/
     }
 
     private void initRecyclerView(View view) {
@@ -355,7 +368,7 @@ public class ParksFragment extends Fragment {
 
     }
 
-    private class ImageViewFactory implements ViewSwitcher.ViewFactory {
+  /*  private class ImageViewFactory implements ViewSwitcher.ViewFactory {
         @Override
         public View makeView() {
             final ImageView imageView = new ImageView(getActivity());
@@ -366,7 +379,7 @@ public class ParksFragment extends Fragment {
 
             return imageView;
         }
-    }
+    }*/
 
     private class OnCardClickListener implements View.OnClickListener {
         @Override
@@ -397,100 +410,110 @@ public class ParksFragment extends Fragment {
         }
     }
 
-    public class GetNearbyPlace extends AsyncTask<Object,String,String> {
-
-        String googlePlacesData;
-        GoogleMap googleMap;
-        String url;
-        @Override
-        protected String doInBackground(Object... objects) {
-            //  googleMap= (GoogleMap) objects[0];
-            url= (String) objects[0];
-            DownloadUrl downloadUrl=new DownloadUrl();
-            try {
-                googlePlacesData=downloadUrl.readUrl(url);
-                Log.i("passcccheck",""+googlePlacesData);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return googlePlacesData;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            List<HashMap<String, String>> nearbyPlaceList;
-            DataParser parser = new DataParser();
-            nearbyPlaceList = parser.parse(s);
-            Log.i("cccheck",""+nearbyPlaceList);
-
-            showNearbyPlaces(nearbyPlaceList);
-        }
-        private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
+    /* public class GetNearbyPlace extends AsyncTask<Object,String,String> {
+ 
+         String googlePlacesData;
+         GoogleMap googleMap;
+         String url;
+         @Override
+         protected String doInBackground(Object... objects) {
+           //  googleMap= (GoogleMap) objects[0];
+             url= (String) objects[0];
+             DownloadUrl downloadUrl=new DownloadUrl();
+             try {
+                 googlePlacesData=downloadUrl.readUrl(url);
+                 Log.i("passcccheck",""+googlePlacesData);
+                // Log.i("tooooooooken",""+gettoken(googlePlacesData));
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             return googlePlacesData;
+         }
+ 
+         @Override
+         protected void onPostExecute(String s) {
+             List<HashMap<String, String>> nearbyPlaceList;
+             DataParser parser = new DataParser();
+             nearbyPlaceList = parser.parse(s);
+             Log.i("cccheck",""+nearbyPlaceList);
+ 
+             showNearbyPlaces(nearbyPlaceList);
+         }
+        *//* private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
         {
             for(int i = 0; i < nearbyPlaceList.size(); i++)
             {
                 HashMap<String, String> googlePlace = nearbyPlaceList.get(i);
-                place.add(googlePlace.get("Place_Name"));
-                lat.add(""+Double.parseDouble( googlePlace.get("lat")));
-                lang.add(""+Double.parseDouble( googlePlace.get("lang")));
-                temperature.add(googlePlace.get("Vicinity"));
-                rating.add(googlePlace.get("rating"));
-                temperature.add(googlePlace.get("Vicinity"));
+                 place.add(googlePlace.get("Place_Name"));
+                 lat.add(""+Double.parseDouble( googlePlace.get("lat")));
+                 lang.add(""+Double.parseDouble( googlePlace.get("lang")));
+                 temperature.add(googlePlace.get("Vicinity"));
+                 rating.add(googlePlace.get("rating"));
+                 temperature.add(googlePlace.get("Vicinity"));
                 place_id.add(googlePlace.get("place_id"));
                 photo.add(googlePlace.get("photo_reference"));
-                Log.i("finaldata",""+place);
+                 Log.i("finaldata",""+place);
                 //String vicinity = googlePlace.get("vicinity");
-                /*double lat = Double.parseDouble( googlePlace.get("lat"));
-                double lng = Double.parseDouble( googlePlace.get("lng"));*/
+                *//**//*double lat = Double.parseDouble( googlePlace.get("lat"));
+                double lng = Double.parseDouble( googlePlace.get("lng"));*//**//*
             }
             datafinalize(rating,photo,place_id,place,temperature,lat,lang);
         }
-    }
+    }*//*
     public String getUrl(double lat,double lang)
     {
         StringBuilder googlePlaceUrl=new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         googlePlaceUrl.append("location="+lat+","+lang);
-        googlePlaceUrl.append("&type=hospital&radius=1000&key="+"AIzaSyCGqN6I6P5cRkgFibX7sVZ6GIgV_r0ybpI");
+        googlePlaceUrl.append("&type=restaurant&radius=1000&key="+"AIzaSyAcSkMHAEdafLQT7LvTlJflrDwLfMdu6sU");
         Log.i("dataaaa",googlePlaceUrl.toString());
         return googlePlaceUrl.toString();
 
     }
-    /*public void foto()
-    {
-        // Define a Place ID.
-        String placeId = "INSERT_PLACE_ID_HERE";
 
-// Specify fields. Requests for photos must always have the PHOTO_METADATAS field.
-        List<Place.Field> fields = Arrays.asList(Place.Field.PHOTO_METADATAS);
+*/
+    public void RetrofitWork(){
 
-// Get a Place object (this example uses fetchPlace(), but you can also use findCurrentPlace())
-        FetchPlaceRequest placeRequest = FetchPlaceRequest.builder(placeId, fields).build();
+        Retrofit retrofit = ApiClient.getApiClient();
+        HomeInterfaces homeInterfaces = retrofit.create(HomeInterfaces.class);
+        Call<AttractionResponseModel> call = homeInterfaces.parksInterface();
 
-        placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-            Place place = response.getPlace();
-
-            // Get the photo metadata.
-            PhotoMetadata photoMetadata = place.getPhotoMetadatas().get(0);
-
-            // Get the attribution text.
-            String attributions = photoMetadata.getAttributions();
-
-            // Create a FetchPhotoRequest.
-            FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                    .setMaxWidth(500) // Optional.
-                    .setMaxHeight(300) // Optional.
-                    .build();
-            placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                imageView.setImageBitmap(bitmap);
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    ApiException apiException = (ApiException) exception;
-                    int statusCode = apiException.getStatusCode();
-                    // Handle error with given status code.
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
+        call.enqueue(new Callback<AttractionResponseModel>() {
+            @Override
+            public void onResponse(Call<AttractionResponseModel> call, Response<AttractionResponseModel> response) {
+                ArrayList<String> rating = new ArrayList<>();
+                ArrayList<String> place = new ArrayList<>();
+                ArrayList<String> temperature = new ArrayList<>();
+                ArrayList<String> total_users = new ArrayList<>();
+                ArrayList<String> place_id = new ArrayList<>();
+                ArrayList<String> photo = new ArrayList<>();
+                ArrayList<String> lat = new ArrayList<>();
+                ArrayList<String> lang = new ArrayList<>();
+                ArrayList<AttractionModel> attractionResponseModel = new ArrayList<>();
+                ArrayList<AttractionModel2> attractionResponseModel2 = new ArrayList<>();
+                attractionResponseModel = response.body().getArray1();
+                attractionResponseModel2 = response.body().getArray2();
+                for (int i=0;i<attractionResponseModel.size();i++) {
+                    place.add(attractionResponseModel.get(i).getName());
+                    lat.add(attractionResponseModel.get(i).getLatitude());
+                    lang.add(attractionResponseModel.get(i).getLongitude());
+                    photo.add(attractionResponseModel.get(i).getPhoto_ref());
+                    place_id.add(attractionResponseModel.get(i).getPlace_id());
+                    rating.add(attractionResponseModel2.get(i).getRating());
+                    total_users.add(attractionResponseModel2.get(i).getTotal_users());
                 }
-            });
+                datafinalize(rating,total_users,photo,place_id,place,lat,lang);
+            }
+
+            @Override
+            public void onFailure(Call<AttractionResponseModel> call, Throwable t) {
+
+                Log.i("error:", t.getMessage());
+                Log.i("error:", t.getMessage());
+                Toast.makeText(getActivity(), "error:", Toast.LENGTH_SHORT).show();
+            }
         });
+
+
+
     }
-*/}
+}

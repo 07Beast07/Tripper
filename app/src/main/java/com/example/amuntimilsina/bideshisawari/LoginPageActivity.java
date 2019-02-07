@@ -39,6 +39,7 @@ public class LoginPageActivity extends AppCompatActivity {
         Loginbtn = findViewById(R.id.Loginbtn);
         sharedPreferences = getSharedPreferences("user_info",0);
 
+
         Registerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

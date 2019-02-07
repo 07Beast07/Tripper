@@ -2,9 +2,12 @@ package com.example.amuntimilsina.bideshisawari.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -47,6 +50,7 @@ public class PaymentFragment extends Fragment {
     RelativeLayout payNFC,payQR;
     ImageView topUpBtn;
     DatabaseReference databaseReference;
+    SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -56,6 +60,8 @@ public class PaymentFragment extends Fragment {
         payQR = view.findViewById(R.id.payQR);
         topUpBtn = view.findViewById(R.id.topUpBtn);
         databaseReference = FirebaseDatabase.getInstance().getReference();
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
 
         payQR.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,15 +139,44 @@ public class PaymentFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                databaseReference.child("owners").child(ownersPhoneNo).addListenerForSingleValueEvent(new ValueEventListener() {
+                databaseReference.child("user").addListenerForSingleValueEvent(new ValueEventListener() {
+
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Double TotalBalance = Double.valueOf(dataSnapshot.child("balance").getValue(Double.class));
-                        Double SetBalance = TotalBalance+Double.parseDouble(priceToPay);
-                        String SetBalance1 = String.valueOf(SetBalance);
-                        databaseReference.child("owners").child(ownersPhoneNo).child("balance").setValue(SetBalance1);
-                        Toast.makeText(getActivity(), "Payment Sucessful!", Toast.LENGTH_SHORT).show();
-                        //Add to History
+
+
+                        final Double userBalance = Double.parseDouble(dataSnapshot.child(sharedPreferences.getString("phone","")).child("balance").getValue(String.class));
+
+                        if(userBalance >= Double.valueOf(priceToPay)){
+
+                            //Decreasing user balance
+                            Double TotalUserBalance = userBalance;
+                            Double SetUserBalance = TotalUserBalance-Double.parseDouble(priceToPay);
+                            String SetUserBalance1 = String.valueOf(SetUserBalance);
+                            databaseReference.child("user").child(sharedPreferences.getString("phone","")).child("balance").setValue(SetUserBalance1);
+
+
+
+                            databaseReference.child("owners").child(ownersPhoneNo).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    //Increasing owners balance
+                                    Double TotalOwnerBalance = Double.valueOf(dataSnapshot.child("balance").getValue(String.class));
+                                    Double SetOwnerBalance = TotalOwnerBalance+Double.parseDouble(priceToPay);
+                                    String SetOwnerBalance1 = String.valueOf(SetOwnerBalance);
+                                    databaseReference.child("owners").child(ownersPhoneNo).child("balance").setValue(SetOwnerBalance1);
+                                    Toast.makeText(getActivity(), "Payment Sucessful!", Toast.LENGTH_SHORT).show();
+
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }else {
+                            Toast.makeText(getActivity(), "Insufficient balance!", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
 
                     @Override
@@ -168,5 +203,13 @@ public class PaymentFragment extends Fragment {
         dialog.show();
 
 
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        sharedPreferences = PaymentFragment.this.getActivity().getSharedPreferences("user_info", Context.MODE_PRIVATE);
+        Log.i("lalala",sharedPreferences.getString("phone","null"));
     }
 }

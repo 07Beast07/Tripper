@@ -16,7 +16,7 @@ public class SliderCard extends RecyclerView.ViewHolder implements DecodeBitmapT
     private static int viewWidth = 0;
     private static int viewHeight = 0;
 
-    private final ImageView imageView;
+    public final ImageView imageView;
 
     private DecodeBitmapTask task;
 

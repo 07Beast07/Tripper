@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class BusNumberModel {
 
-    @SerializedName("bus_no")
+    @SerializedName("BUS_No")
     @Expose
     String bus_no;
 

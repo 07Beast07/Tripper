@@ -49,17 +49,18 @@ public class HomeDefaultFragment extends Fragment {
     private ArrayList<String> rating = new ArrayList<>();
     private ArrayList<String> place = new ArrayList<>();
     private ArrayList<String> temperature = new ArrayList<>();
+    private ArrayList<String> photo = new ArrayList<>();
     private ArrayList<Double> lat = new ArrayList<>();
     private ArrayList<Double> lang = new ArrayList<>();
 
-    private final SliderAdapter sliderAdapter = new SliderAdapter(pics, 20, new HomeDefaultFragment.OnCardClickListener());
+    private  SliderAdapter sliderAdapter;
 
     private CardSliderLayoutManager layoutManger;
     private RecyclerView recyclerView;
     private TextSwitcher temperatureSwitcher;
     private TextSwitcher ratingSwitcher;
-    double mainlat=27.674436;
-    double mainlang=85.365128;
+    double mainlat=27.682123;
+    double mainlang=85.319577;
     private TextView place1TextView;
     private TextView place2TextView;
     private int placeOffset1;
@@ -75,12 +76,14 @@ public class HomeDefaultFragment extends Fragment {
         initData();
         return view;
     }
-    public void datafinalize(ArrayList<String> rating, ArrayList<String> place, ArrayList<String> temperature, ArrayList<Double> lat, ArrayList<Double> lang){
+    public void datafinalize(ArrayList<String> rating, ArrayList<String> photo,ArrayList<String> place, ArrayList<String> temperature, ArrayList<Double> lat, ArrayList<Double> lang){
         this.rating=rating;
         this.place=place;
         this.temperature=temperature;
         this.lat=lat;
         this.lang=lang;
+        this.photo=photo;
+        sliderAdapter= new SliderAdapter(photo, 20, "dssd",new HomeDefaultFragment.OnCardClickListener());
         Log.i("11datafinalizaton",""+place.size());
         if(place.size()>0) {
             initRecyclerView(getView());
@@ -419,12 +422,13 @@ public class HomeDefaultFragment extends Fragment {
                 temperature.add(googlePlace.get("Vicinity"));
                 rating.add(googlePlace.get("rating"));
                 temperature.add(googlePlace.get("Vicinity"));
+                photo.add(googlePlace.get("photo_reference"));
                 Log.i("finaldata",""+place);
                 /*String vicinity = googlePlace.get("vicinity");
                 double lat = Double.parseDouble( googlePlace.get("lat"));
                 double lng = Double.parseDouble( googlePlace.get("lng"));*/
             }
-            datafinalize(rating,place,temperature,lat,lang);
+            datafinalize(rating,photo,place,temperature,lat,lang);
         }
     }
     public String getUrl(double lat,double lang)

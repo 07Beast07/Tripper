@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.amuntimilsina.bideshisawari.Helper.DirectionsJSONParser;
 import com.example.amuntimilsina.bideshisawari.fragments.DetailsActivity;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -45,8 +47,9 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
     private ArrayList<String> lat = new ArrayList<>();
     private ArrayList<String> lang = new ArrayList<>();
     private ArrayList<String> photo = new ArrayList<>();
-    double mainlat=27.674436;
-    double mainlang=85.365128;
+    double mainlat=27.682123;
+    double mainlang=85.319577;
+    ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +80,13 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
         temperature=getIntent().getStringArrayListExtra("temperature");
         photo=getIntent().getStringArrayListExtra("photo_reference");
         final LatLng mylocation=new LatLng(mainlat,mainlang);
+        Log.i("llllocationnnn",""+lang);
         mMap.addMarker(new MarkerOptions().position(mylocation).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mylocation, 14));
         for (int i=0;i<place.size();i++) {
             // Add a marker in Sydney and move the camera
             LatLng markers = new LatLng(Double.parseDouble(lat.get(i)), Double.parseDouble(lang.get(i)));
+            Log.i("latttttt",""+markers);
             mMap.addMarker(new MarkerOptions().position(markers).title(place.get(i)));
             //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
@@ -97,9 +102,12 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
                 }
                 LayoutInflater inflater = LayoutInflater.from(NearbyMapsActivity.this);
                 final View yourCustomView = inflater.inflate(R.layout.mapsmarkerlayout, null);
-                Button direction, details;
+                final Button direction, details;
+                imageView=yourCustomView.findViewById(R.id.image1);
                 direction = yourCustomView.findViewById(R.id.direction);
                 details = yourCustomView.findViewById(R.id.details);
+                String temp="https://maps.googleapis.com/maps/api/place/photo?maxwidth=1600&photoreference="+getref(photo,a,b,lat,lang)+"&key=AIzaSyBvFHasFAk6yGH3aSUKBFDImQCydLUHYqM";
+                Picasso.get().load(temp).into(imageView);
                 final AlertDialog dialog = new AlertDialog.Builder(NearbyMapsActivity.this)
                         .setView(yourCustomView).create();
                 direction.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +121,7 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
                         dialog.dismiss();
                     }
                 });
+
                 details.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -171,8 +180,10 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             try {
                 jObject = new JSONObject(jsonData[0]);
+                Log.i("lllllllllllllll",""+jObject);
                 DirectionsJSONParser parser = new DirectionsJSONParser();
                 routes = parser.parse(jObject);
+                Log.i("pppppppppp",""+routes);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -181,9 +192,11 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+
             ArrayList points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
+            Log.i("searching",""+result);
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList();
                 lineOptions = new PolylineOptions();
@@ -228,7 +241,8 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyBvFHasFAk6yGH3aSUKBFDImQCydLUHYqM";
+        Log.i("testing101",""+url);
         return url;
     }
 
@@ -268,5 +282,16 @@ public class NearbyMapsActivity extends FragmentActivity implements OnMapReadyCa
             urlConnection.disconnect();
         }
         return data;
+    }
+    public String getref(ArrayList<String>photo,Double a,Double b,ArrayList<String>lat,ArrayList<String>lang)
+    {
+        for(int i=0;i<photo.size();i++)
+        {
+            if((a.equals(Double.parseDouble(lat.get(i))))&&b.equals(Double.parseDouble(lang.get(i))))
+            {
+                return photo.get(i);
+            }
+        }
+        return "";
     }
 }

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class BusStationModel{
 
-    @SerializedName("station")
+    @SerializedName("Station")
     @Expose
     String station;
 

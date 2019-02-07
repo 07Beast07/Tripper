@@ -1,5 +1,6 @@
 package com.example.amuntimilsina.bideshisawari.fragments;
 
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -58,7 +59,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class AttractionFragment extends Fragment {
+public class AgencyFragment extends Fragment {
     //private final int[][] dotCoords = new int[5][2];
     private final int[] pics = {R.drawable.p1, R.drawable.p2, R.drawable.p3, R.drawable.p4, R.drawable.p5};
     //private final int[] maps = {R.drawable.map_paris, R.drawable.map_seoul, R.drawable.map_london, R.drawable.map_beijing, R.drawable.map_greece};
@@ -113,6 +114,8 @@ public class AttractionFragment extends Fragment {
                 intent.putStringArrayListExtra("lang",lang);
                 intent.putStringArrayListExtra("temperature",temperature);
                 intent.putStringArrayListExtra("photo_reference",photo);
+                Log.i("llllllllll",""+lat);
+                Log.i("llllllllll",""+lang);
                 startActivity(intent);
             }
         });
@@ -126,8 +129,8 @@ public class AttractionFragment extends Fragment {
         this.lang=lang;
         this.photo=photo;
         this.total_users=total_users;
-        sliderAdapter = new SliderAdapter(photo, place.size(),apikey, new AttractionFragment.OnCardClickListener());
-        Log.i("11datafinalizaton",""+place.size());
+        sliderAdapter = new SliderAdapter(photo, place.size(),apikey, new AgencyFragment.OnCardClickListener());
+        Log.i("11datafinalizaton",""+photo);
         if(place.size()>0) {
             initRecyclerView(getView());
             initCountryText(getView());
@@ -174,27 +177,27 @@ public class AttractionFragment extends Fragment {
 
     private void initSwitchers(View view) {
       /*  temperatureSwitcher = (TextSwitcher) view.findViewById(R.id.ts_temperature);
-        temperatureSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.TemperatureTextView, true));
+        temperatureSwitcher.setFactory(new AgencyFragment.TextViewFactory(R.style.TemperatureTextView, true));
         temperatureSwitcher.setCurrentText(temperature.get(0));
 */
         ratingSwitcher = (TextSwitcher) view.findViewById(R.id.ts_rating);
-        ratingSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.PlaceTextView, false));
+        ratingSwitcher.setFactory(new AgencyFragment.TextViewFactory(R.style.PlaceTextView, false));
         ratingSwitcher.setCurrentText(rating.get(0));
 
         //clockSwitcher = (TextSwitcher) view.findViewById(R.id.ts_clock);
-        //clockSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.ClockTextView, false));
+        //clockSwitcher.setFactory(new AgencyFragment.TextViewFactory(R.style.ClockTextView, false));
         //clockSwitcher.setCurrentText(times[0]);
 
        /* descriptionsSwitcher = (TextSwitcher) view.findViewById(R.id.ts_description);
         descriptionsSwitcher.setInAnimation(getActivity(), android.R.anim.fade_in);
         descriptionsSwitcher.setOutAnimation(getActivity(), android.R.anim.fade_out);
-        descriptionsSwitcher.setFactory(new AttractionFragment.TextViewFactory(R.style.DescriptionTextView, false));
+        descriptionsSwitcher.setFactory(new AgencyFragment.TextViewFactory(R.style.DescriptionTextView, false));
         descriptionsSwitcher.setCurrentText(getString(descriptions[0]));*/
 
       /*  mapSwitcher = (ImageSwitcher) view.findViewById(R.id.ts_map);
         mapSwitcher.setInAnimation(getActivity(), R.anim.fade_in);
         mapSwitcher.setOutAnimation(getActivity(), R.anim.fade_out);
-        mapSwitcher.setFactory(new AttractionFragment.ImageViewFactory());
+        mapSwitcher.setFactory(new AgencyFragment.ImageViewFactory());
         mapSwitcher.setImageResource(maps[0]);*/
 /*
         mapLoadListener = new DecodeBitmapTask.Listener() {
@@ -415,36 +418,36 @@ public class AttractionFragment extends Fragment {
         }
     }
 
-   /* public class GetNearbyPlace extends AsyncTask<Object,String,String> {
-
-        String googlePlacesData;
-        GoogleMap googleMap;
-        String url;
-        @Override
-        protected String doInBackground(Object... objects) {
-          //  googleMap= (GoogleMap) objects[0];
-            url= (String) objects[0];
-            DownloadUrl downloadUrl=new DownloadUrl();
-            try {
-                googlePlacesData=downloadUrl.readUrl(url);
-                Log.i("passcccheck",""+googlePlacesData);
-               // Log.i("tooooooooken",""+gettoken(googlePlacesData));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return googlePlacesData;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            List<HashMap<String, String>> nearbyPlaceList;
-            DataParser parser = new DataParser();
-            nearbyPlaceList = parser.parse(s);
-            Log.i("cccheck",""+nearbyPlaceList);
-
-            showNearbyPlaces(nearbyPlaceList);
-        }
-       *//* private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
+    /* public class GetNearbyPlace extends AsyncTask<Object,String,String> {
+ 
+         String googlePlacesData;
+         GoogleMap googleMap;
+         String url;
+         @Override
+         protected String doInBackground(Object... objects) {
+           //  googleMap= (GoogleMap) objects[0];
+             url= (String) objects[0];
+             DownloadUrl downloadUrl=new DownloadUrl();
+             try {
+                 googlePlacesData=downloadUrl.readUrl(url);
+                 Log.i("passcccheck",""+googlePlacesData);
+                // Log.i("tooooooooken",""+gettoken(googlePlacesData));
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             return googlePlacesData;
+         }
+ 
+         @Override
+         protected void onPostExecute(String s) {
+             List<HashMap<String, String>> nearbyPlaceList;
+             DataParser parser = new DataParser();
+             nearbyPlaceList = parser.parse(s);
+             Log.i("cccheck",""+nearbyPlaceList);
+ 
+             showNearbyPlaces(nearbyPlaceList);
+         }
+        *//* private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlaceList)
         {
             for(int i = 0; i < nearbyPlaceList.size(); i++)
             {
@@ -480,19 +483,19 @@ public class AttractionFragment extends Fragment {
 
         Retrofit retrofit = ApiClient.getApiClient();
         HomeInterfaces homeInterfaces = retrofit.create(HomeInterfaces.class);
-        Call<AttractionResponseModel> call = homeInterfaces.attractionInterface();
+        Call<AttractionResponseModel> call = homeInterfaces.agencyInterface();
 
         call.enqueue(new Callback<AttractionResponseModel>() {
             @Override
             public void onResponse(Call<AttractionResponseModel> call, Response<AttractionResponseModel> response) {
-                 ArrayList<String> rating = new ArrayList<>();
-                 ArrayList<String> place = new ArrayList<>();
-                 ArrayList<String> temperature = new ArrayList<>();
-                 ArrayList<String> total_users = new ArrayList<>();
-                 ArrayList<String> place_id = new ArrayList<>();
-                 ArrayList<String> photo = new ArrayList<>();
-                 ArrayList<String> lat = new ArrayList<>();
-                 ArrayList<String> lang = new ArrayList<>();
+                ArrayList<String> rating = new ArrayList<>();
+                ArrayList<String> place = new ArrayList<>();
+                ArrayList<String> temperature = new ArrayList<>();
+                ArrayList<String> total_users = new ArrayList<>();
+                ArrayList<String> place_id = new ArrayList<>();
+                ArrayList<String> photo = new ArrayList<>();
+                ArrayList<String> lat = new ArrayList<>();
+                ArrayList<String> lang = new ArrayList<>();
                 ArrayList<AttractionModel> attractionResponseModel = new ArrayList<>();
                 ArrayList<AttractionModel2> attractionResponseModel2 = new ArrayList<>();
                 attractionResponseModel = response.body().getArray1();
@@ -522,3 +525,4 @@ public class AttractionFragment extends Fragment {
 
     }
 }
+

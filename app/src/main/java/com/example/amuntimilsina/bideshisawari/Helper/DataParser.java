@@ -21,6 +21,7 @@ public class DataParser {
         String lat="-NA-";
         String lang="-NA-";
         String reference="-NA-";
+//       Log.i("hooooollyyy",googlePlaceJSON.getString("next_page_token"));
         if(!googlePlaceJSON.isNull("name"))
         {
             placeName=googlePlaceJSON.getString("name");

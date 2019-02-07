@@ -30,9 +30,9 @@ public class HomeFragment extends Fragment {
 //    FirebaseAuth.AuthStateListener authStateListener;
     SharedPreferences sharedPreferences;
     FrameLayout frameLayout;
-    LinearLayout parks, attraction, resturants, shopping;
-    TextView parkstext, shoppingtext, resturanttext, attractiontext;
-    CircularImageView parksImage, shoppingImage, resturantImage, attractionImage;
+    LinearLayout parks, attraction, resturants, shopping,travel;
+    TextView parkstext, shoppingtext, resturanttext, attractiontext,traveltext;
+    CircularImageView parksImage, shoppingImage, resturantImage, attractionImage,travelImage;
     View line;
 
     @Nullable
@@ -42,23 +42,27 @@ public class HomeFragment extends Fragment {
         sharedPreferences = this.getActivity().getSharedPreferences("user_info",0);
         line = view.findViewById(R.id.line);
         parksImage = view.findViewById(R.id.parks_icon);
+        travelImage = view.findViewById(R.id.travel_icon);
         shoppingImage = view.findViewById(R.id.shopping_icon);
         resturantImage = view.findViewById(R.id.resturant_icon);
         attractionImage = view.findViewById(R.id.attraction_icon);
         logOutBtn = view.findViewById(R.id.logOutBtn);
         frameLayout = view.findViewById(R.id.home_frame);
         parks = view.findViewById(R.id.parks);
+        travel = view.findViewById(R.id.travel);
         attraction = view.findViewById(R.id.attraction);
         resturants = view.findViewById(R.id.resturants);
         shopping = view.findViewById(R.id.shopping);
         shoppingtext = view.findViewById(R.id.shopping_text);
         attractiontext = view.findViewById(R.id.attraction_text);
+        traveltext = view.findViewById(R.id.travel_text);
         resturanttext = view.findViewById(R.id.resturants_text);
         parkstext = view.findViewById(R.id.parks_text);
         parks.setOnClickListener(tabclick);
         attraction.setOnClickListener(tabclick);
         resturants.setOnClickListener(tabclick);
         shopping.setOnClickListener(tabclick);
+        travel.setOnClickListener(tabclick);
 
         Log.i("blala",sharedPreferences.getString("phone",""));
 
@@ -71,7 +75,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         };*/
-        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_frame, new HomeDefaultFragment()).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.home_frame, new AttractionFragment()).commit();
 
         logOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,8 +125,10 @@ public class HomeFragment extends Fragment {
                 attractionImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 parkstext.setTextColor(getResources().getColor(R.color.ImageBorder));
                 line.setBackgroundColor(getResources().getColor(R.color.ImageBorder));
+                travelImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 resturanttext.setTextColor(getResources().getColor(R.color.ViewColor));
                 shoppingtext.setTextColor(getResources().getColor(R.color.ViewColor));
+                traveltext.setTextColor(getResources().getColor(R.color.ViewColor));
                 attractiontext.setTextColor(getResources().getColor(R.color.ViewColor));
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_frame, new ParksFragment()).commit();
 
@@ -132,6 +138,8 @@ public class HomeFragment extends Fragment {
                 resturantImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 attractionImage.setBorderColor(getResources().getColor(R.color.ImageBorder));
                 line.setBackgroundColor(getResources().getColor(R.color.ImageBorder));
+                travelImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                traveltext.setTextColor(getResources().getColor(R.color.ViewColor));
                 parkstext.setTextColor(getResources().getColor(R.color.ViewColor));
                 resturanttext.setTextColor(getResources().getColor(R.color.ViewColor));
                 shoppingtext.setTextColor(getResources().getColor(R.color.ViewColor));
@@ -144,6 +152,8 @@ public class HomeFragment extends Fragment {
                 resturantImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 attractionImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 parkstext.setTextColor(getResources().getColor(R.color.ViewColor));
+                travelImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                traveltext.setTextColor(getResources().getColor(R.color.ViewColor));
                 resturanttext.setTextColor(getResources().getColor(R.color.ViewColor));
                 shoppingtext.setTextColor(getResources().getColor(R.color.ImageBorder));
                 attractiontext.setTextColor(getResources().getColor(R.color.ViewColor));
@@ -155,14 +165,31 @@ public class HomeFragment extends Fragment {
                 parksImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 shoppingImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 resturantImage.setBorderColor(getResources().getColor(R.color.ImageBorder));
+                travelImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 attractionImage.setBorderColor(getResources().getColor(R.color.ViewColor));
                 parkstext.setTextColor(getResources().getColor(R.color.ViewColor));
                 resturanttext.setTextColor(getResources().getColor(R.color.ImageBorder));
                 line.setBackgroundColor(getResources().getColor(R.color.ImageBorder));
                 shoppingtext.setTextColor(getResources().getColor(R.color.ViewColor));
+                traveltext.setTextColor(getResources().getColor(R.color.ViewColor));
                 attractiontext.setTextColor(getResources().getColor(R.color.ViewColor));
 
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_frame, new ResturantsFragment()).commit();
+
+            }else if (view.getId() == R.id.travel) {
+                parksImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                shoppingImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                resturantImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                attractionImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                attractionImage.setBorderColor(getResources().getColor(R.color.ViewColor));
+                travelImage.setBorderColor(getResources().getColor(R.color.ImageBorder));
+                parkstext.setTextColor(getResources().getColor(R.color.ViewColor));
+                resturanttext.setTextColor(getResources().getColor(R.color.ViewColor));
+                line.setBackgroundColor(getResources().getColor(R.color.ViewColor));
+                shoppingtext.setTextColor(getResources().getColor(R.color.ViewColor));
+                traveltext.setTextColor(getResources().getColor(R.color.ImageBorder));
+                attractiontext.setTextColor(getResources().getColor(R.color.ViewColor));
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.home_frame, new AgencyFragment()).commit();
 
             }
 

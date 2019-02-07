@@ -3,6 +3,8 @@ package com.example.amuntimilsina.bideshisawari.RetrofitInitilization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -11,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
-    public final static String BASE_URL = "http://192.168.1.11:8080/tripper/";
+    public final static String BASE_URL = "http://192.168.1.8:8080/tripper/";
     public static Retrofit retrofit = null;
 
     public static Retrofit getApiClient() {
@@ -25,9 +27,15 @@ public class ApiClient {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+
+
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(20,TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(20, TimeUnit.SECONDS)
                     .addInterceptor(loggingInterceptor)
                     .build();
+
 
 //                gson.fromJson(, Ad.class);
             retrofit = new Retrofit.Builder()

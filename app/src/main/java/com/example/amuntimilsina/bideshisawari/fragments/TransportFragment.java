@@ -59,12 +59,13 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnMarkerDragListener,
         GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener,
+        View.OnClickListener{
 
     private GoogleMap mMap;
     private double longitude;
     private double latitude;
-    private GoogleApiClient googleApiClient;
+    private GoogleApiClient googleApiclient;
 
 
     EditText Searchbox;
@@ -107,27 +108,30 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
             }
         });
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment == null) {
+        SupportMapFragment supportMapFragment  = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.maps);
+        supportMapFragment .getMapAsync(this);
+
+        if (supportMapFragment  == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            mapFragment = SupportMapFragment.newInstance();
-            ft.replace(R.id.map, mapFragment).commit();
+            supportMapFragment  = SupportMapFragment.newInstance();
+            ft.replace(R.id.maps, supportMapFragment ).commit();
         }
-        mapFragment.getMapAsync(this);
 
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+//        mapFragment.getMapAsync(this);
+
+        googleApiclient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
+
         return view;
     }
 
     private void getCurrentLocation() {
-
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -138,7 +142,7 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiclient);
         if (location != null) {
             //Getting longitude and latitude
             longitude = location.getLongitude();
@@ -155,18 +159,20 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
          * adding marker to map
          * move the camera with animation
          */
-        int height = 120;
+
+        int height = 100;
         int width = 100;
-        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.tourist_icon);
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.mipmap.download);
         Bitmap b = bitmapdraw.getBitmap();
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+        Bitmap smallMarker1 = Bitmap.createScaledBitmap(b, width, height, false);
+
 
         LatLng latLng = new LatLng(latitude, longitude);
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .draggable(true)
-                .title("It's you dude!!"))
-                .setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                .title("It's you dude!"))
+                .setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker1));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -174,6 +180,9 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
 
     }
+
+
+
 
 
     @Override
@@ -208,8 +217,10 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
                             for (int i = 0; i < busNumberData.size(); i++) {
-                                String BusNo = busNumberData.get(i).getNumber();
+                                String BusNo = busNumberData.get(i).getNumber().toLowerCase();
                                 Log.i("hahaha",BusNo);
+//                                Log.i("pppppppppp",""+dataSnapshot.child(BusNo).child("latitude"));
+                                
                                 Double lat = Double.valueOf(dataSnapshot.child(BusNo).child("latitude").getValue(String.class));
                                 Double lang = Double.valueOf(dataSnapshot.child(BusNo).child("longitude").getValue(String.class));
 
@@ -253,7 +264,7 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
                 }
                 @Override
                 public void onFailure(Call<List<BusNumberModel>> call, Throwable t) {
-                    Log.i("error", t.getMessage().toString());
+                    Log.i("error", t.getMessage());
                 }
             });
 
@@ -288,7 +299,9 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        Log.i("connecteddd","");
         getCurrentLocation();
+        Toast.makeText(getActivity(), "connected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -319,6 +332,7 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMarkerDrag(Marker marker) {
 
+
     }
 
     @Override
@@ -328,13 +342,18 @@ public class TransportFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onStart() {
-        googleApiClient.connect();
+        googleApiclient.connect();
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        googleApiClient.disconnect();
+        googleApiclient.disconnect();
         super.onStop();
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 }
